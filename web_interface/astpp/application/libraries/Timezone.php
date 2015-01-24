@@ -30,18 +30,9 @@ class Timezone {
   function uset_timezone(){
 	    $account_data = $this->CI->session->userdata('accountinfo');
 	    return $account_data['timezone_id'] ;
-/*	    $QUERY = $this->CI->db->query("SELECT timezone_id FROM accounts where id =".$account_data['id']);
-	    $result = $QUERY->result();
-	    $account_data['timezone_id'] = $result[0]->timezone_id;
-	    $this->CI->session->set_userdata("accountinfo",$account_data);
-	    return $result[0]->timezone_id;
-*/	  
   }
   function display_GMT($currDate,$fulldate = 1)
   {	
-
-//echo $currDate; exit;
-  
       $number = $this->uset_timezone();
       $SERVER_GMT='0';
 
@@ -51,6 +42,7 @@ class Timezone {
       $USER_GMT = $timezone_offset['0']->gmtoffset;
 
       $date_time_array = getdate(strtotime($currDate));
+      
       $hours = $date_time_array['hours'];
       $minutes = $date_time_array['minutes'];
       $seconds = $date_time_array['seconds'];
@@ -58,20 +50,19 @@ class Timezone {
       $day = $date_time_array['mday'];
       $year = $date_time_array['year'];
       $timestamp = mktime($hours, $minutes, $seconds, $month, $day, $year);
-      
-      $timestamp = $timestamp-($USER_GMT-$SERVER_GMT);
+
+      $timestamp = $timestamp+($USER_GMT-$SERVER_GMT);
       if ($fulldate == 1) {
 	      //$date = date("Y-m-d H:i:s", $timestamp);
 		$date = date("Y-m-d H:i:s", $timestamp);
       } else {
 	      $date = date("Y-m-d", $timestamp);
       }
-//       echo $date;exit;
+      
       return $date;
   }
 
   function convert_to_GMT($currDate,$fulldate = 1){
-
       $number = $this->uset_timezone();
       $SERVER_GMT='0';
 
@@ -89,7 +80,7 @@ class Timezone {
       $year = $date_time_array['year'];
       $timestamp = mktime($hours, $minutes, $seconds, $month, $day, $year);
 
-      $timestamp = $timestamp + ($SERVER_GMT - $USER_GMT);
+      $timestamp = $timestamp - ($SERVER_GMT - $USER_GMT);
       if ($fulldate == 1) {
 	      $date = date("Y-m-d H:i:s", $timestamp);
       } else {

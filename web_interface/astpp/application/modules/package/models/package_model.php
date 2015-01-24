@@ -68,14 +68,99 @@ class Package_model extends CI_Model {
         return true;
     }
 
-    function getpackage_counter_list($flag, $start = 0, $limit = 0) {
-        $this->db_model->build_search('package_list_search');
-        if ($flag) {
-            $query = $this->db_model->getSelect("*", "counters", "", "id", "desc", $limit, $start);
-        } else {
-            $query = $this->db_model->countQuery("*", "counters", "");
+        function getpackage_counter_list($flag, $start = 0, $limit = 0) {
+$where = array();
+	
+	$accountinfo = $this->session->userdata('accountinfo');
+	$reseller_id=$accountinfo['type']== -1 ? 0 : $accountinfo['id'];
+	$this->db->where('reseller_id',$reseller_id);
+	$this->db->select('id');
+	$result=$this->db->get('accounts');
+	
+	
+	$this->db_model->build_search('package_list_search');	
+	if($this->session->userdata('advance_search')!= 1){
+	
+	  
+	  if($result->num_rows() >0){
+	  $acc_arr=array();
+	  $result=$result->result_array();
+	    foreach($result as $data){
+	      $acc_arr[]=$data['id'];
+	    }
+	    $this->db->where_in('accountid',$acc_arr);
+	    if($flag){
+	      $this->db->select('*');
+	    }
+	    else{
+	      $this->db->select('count(id) as count');
+	    }
+	    if($flag){
+	      $this->db->order_by('seconds','desc');
+	      $this->db->limit($limit, $start);
+	    }
+	    $result=$this->db->get('counters');
+// 	    echo $this->db->last_query();exit;    
+	    if($flag){
+	      return $result;
+	    }else{
+	      $result=$result->result_array();
+	      return $result[0]['count'];
+	    }
+	  }else{
+          if($flag){
+	      $query=(object)array('num_rows'=>0);
+	  }
+	  else{
+	      $query=0;
+	  }
+ 	  
+	  return $query;
         }
-        return $query;
+    }else{
+          
+         if($result->num_rows() >0){
+	    $acc_arr=array();
+	    $result=$result->result_array();
+	    foreach($result as $data){
+	      $acc_arr[]=$data['id'];
+	    }
+	    $this->db->where_in('accountid',$acc_arr);
+	}
+         
+         if($flag){
+	  $this->db->select('*');
+         }
+         else{
+          $this->db->select('count(id) as count');
+         }
+         if($flag){
+	  $this->db->order_by('seconds','desc');
+	  $this->db->limit($limit, $start);
+         }
+         $result=$this->db->get('counters');
+//  	echo $this->db->last_query();exit;              
+         if($result->num_rows() > 0){
+	      if($flag){
+	        
+		return $result;
+	      }else{
+		$result=$result->result_array();
+		
+		return $result[0]['count'];
+	      }
+         }else{
+	      if($flag){
+	          
+		  $query=(object)array('num_rows'=>0);
+	      }
+	      else{
+		  $query=0;
+	      }
+// 	echo $this->db->last_query();exit;    
+	return $query;
+	}
+    }
     }
     function insert_package_pattern($data, $packageid) {
         $data = explode(",", $data);

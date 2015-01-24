@@ -25,7 +25,7 @@
 #################################
 TEMP_USER_ANSWER="no"
 INSTALL_ASTPP="no"
-ASTPP_SOURCE_DIR="/usr/src/trunk/"
+ASTPP_SOURCE_DIR="/usr/src/trunk"
 ASTPP_HOST_DOMAIN_NAME="host.domain.tld"
 
 #ASTPP Configuration
@@ -113,6 +113,8 @@ install_epel () {
 		rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
 	fi
 }
+
+install_epel
 
 remove_epel () {
 # only on CentOS
@@ -222,7 +224,7 @@ install_freeswitch_for_astpp () {
 	apt-get update
 
 	# Install Freeswitch pre-requisite packages using APTITUDE
-	apt-get install -y autoconf automake devscripts gawk g++ git-core libjpeg62-dev libncurses5-dev libtool make python-dev gawk pkg-config libtiff4-dev libperl-dev libgdbm-dev libdb-dev gettext sudo lua5.1  apache2 apache2-threaded-dev php5 php5-dev php5-common php5-cli php5-gd php-pear  php5-cli php-apc php5-curl libapache2-mod-php5 perl libapache2-mod-perl2 libxml2 libxml2-dev openssl libcurl4-openssl-dev gettext libtool gcc g++ libldns-dev libpcre3-dev build-essential
+	apt-get install -y autoconf automake devscripts gawk g++ git-core libjpeg62-dev libncurses5-dev libtool make python-dev gawk pkg-config libperl-dev libgdbm-dev libdb-dev gettext sudo lua5.1  apache2 apache2-threaded-dev php5 php5-dev php5-common php5-cli php5-gd php-pear  php5-cli php-apc php5-curl libapache2-mod-php5 perl libapache2-mod-perl2 libxml2 libxml2-dev openssl libcurl4-openssl-dev gettext libtool gcc g++ libldns-dev libpcre3-dev build-essential
 	apt-get install -y libssl-dev libspeex-dev libspeexdsp-dev libsqlite3-dev libedit-dev libldns-dev libpq-dev
 	echo mysql-server mysql-server/root_password password ${MYSQL_ROOT_PASSWORD} | debconf-set-selections
 	echo mysql-server mysql-server/root_password_again password ${MYSQL_ROOT_PASSWORD} | debconf-set-selections
@@ -269,7 +271,7 @@ install_freeswitch_for_astpp () {
     echo "Enable mod_xml_curl, mod_xml_cdr, mod_perl"
 
     sed -i "s#\#xml_int/mod_xml_curl#xml_int/mod_xml_curl#g" /usr/local/src/freeswitch/modules.conf
-    sed -i "s#\#languages/mod_perl#languages/mod_perl#g" /usr/local/src/freeswitch/modules.conf
+    #sed -i "s#\#languages/mod_perl#languages/mod_perl#g" /usr/local/src/freeswitch/modules.conf
     sed -i "s#\#mod_xml_cdr#mod_xml_cdr#g" /usr/local/src/freeswitch/modules.conf
 
     read -n 1 -p "Press any key to continue ... "
@@ -405,7 +407,7 @@ install_astpp () {
 		perl -MCPAN -e 'my $c = "CPAN::HandleConfig"; $c->load(doit => 1, autoconfig => 1); $c->edit(prerequisites_policy => "follow"); $c->edit(build_requires_install_policy => "yes"); $c->commit'
 		#perl -MCPAN -e "install Bundle::CPAN,ExtUtils::CBuilder,DBI,DBD::mysql,YAML,Params::Validate,CGI,URI::Escape,Time::DaysInMonth,DateTime,DateTime::TimeZone,DateTime::Locale,XML::Simple,Data::Dumper,Module::Build,Storable,Time::Zone,Date::Parse,Curses,POE,Sys::Syslog,FCGI,DateTime::Set,DateTime::Event::Recurrence,DateTime::Incomplete,Date::Language,DateTime::Format::Strptime,DBI::Shell,JSON,CGI::Fast, Locale::gettext,Locale::gettext_pp,Text::Template,Mail::Sendmail,XML::Simple";
 
-		perl -MCPAN -e "install CGI,XML::Simple,Data::Dumper,URI::Escape,JSON,POSIX,DBI,Time::HiRes,DateTime::Format::Strptime";
+		perl -MCPAN -e "install CGI,XML::Simple,Data::Dumper,URI::Escape,JSON,POSIX,DBI,Time::HiRes,DateTime::Format::Strptime,XML::Simple";
 		#cd /usr/src/ASTPP/modules/ASTPP && perl Makefile.PL && make && make install && cd ../../
 	fi
 	
@@ -469,7 +471,10 @@ install_astpp () {
 		
 		if [ ${DIST} = "DEBIAN" ]; then
 			chown -Rf www-data.www-data ${WWWDIR}/html/astpp
-			cp ${ASTPP_SOURCE_DIR}/web_interface/apache/astpp.conf /etc/apache2/conf.d/astpp.conf
+			cp ${ASTPP_SOURCE_DIR}/web_interface/apache/astpp.conf /etc/apache2/sites-available/astpp.conf
+			a2ensite astpp
+			a2ensite astpp.conf
+			/etc/init.d/apache2 restart
 		elif  [ ${DIST} = "CENTOS" ]; then
 			chown -Rf apache.apache ${WWWDIR}/html/astpp
 			cp ${ASTPP_SOURCE_DIR}/web_interface/apache/astpp.conf /etc/httpd/conf.d/astpp.conf
@@ -493,12 +498,7 @@ finalize_astpp_installation () {
 	    sed -i "s#short_open_tag = Off#short_open_tag = On#g" /etc/php.ini
     fi
     
-    /bin/cp -rf /usr/src/ASTPP/freeswitch/conf/autoload_configs/* /usr/local/freeswitch/conf/autoload_configs/
-    #### Edit xml_curl.conf.xml file and change localhost to your ip or domain name.
-    #### Edit xml_cdr.conf.xml file and change localhost to your ip or domain name.
-    #sed -i "s#localhost#${ASTPP_HOST_DOMAIN_NAME}#g" ${FS_DIR}/conf/autoload_configs/xml_curl.conf.xml
-    #sed -i "s#localhost#${ASTPP_HOST_DOMAIN_NAME}#g" ${FS_DIR}/conf/autoload_configs/xml_cdr.conf.xml
-
+    /bin/cp -rf ${ASTPP_SOURCE_DIR}/freeswitch/conf/autoload_configs/* /usr/local/freeswitch/conf/autoload_configs/
 
     #/bin/cp -rf ${ASTPP_SOURCE_DIR}/freeswitch/conf/dialplan/default/astpp_callingcards.xml ${FS_DIR}/conf/dialplan/default/
     #### Edit astpp_callingcards.xml file to change acccess number for calling card.
@@ -507,9 +507,9 @@ finalize_astpp_installation () {
     # Enable mod_xml_curl, mod_xml_cdr, mod_cdr_csv, mod_perl in /usr/local/freeswitch/conf/autoload_configs/modules.conf.xml
     # <!-- <load module="mod_xml_curl"/> -->
     # <!-- <load module="mod_xml_cdr"/> -->
-    sed -i "s#<!-- <load module=\"mod_xml_curl\"/> -->#load module=\"mod_xml_curl\"/>#g" ${FS_DIR}/conf/autoload_configs/modules.conf.xml
+    sed -i "s#<!-- <load module=\"mod_xml_curl\"/> -->#<load module=\"mod_xml_curl\"/>#g" ${FS_DIR}/conf/autoload_configs/modules.conf.xml
     sed -i "s#<!-- <load module=\"mod_xml_cdr\"/> -->#<load module=\"mod_xml_cdr\"/>#g" ${FS_DIR}/conf/autoload_configs/modules.conf.xml
-    sed -i "s#<!-- <load module=\"mod_perl\"/> -->#<load module=\"mod_perl\"/>#g" ${FS_DIR}/conf/autoload_configs/modules.conf.xml
+    #sed -i "s#<!-- <load module=\"mod_perl\"/> -->#<load module=\"mod_perl\"/>#g" ${FS_DIR}/conf/autoload_configs/modules.conf.xml
 
 
     # edit ASTPP Database Connection Information

@@ -17,7 +17,7 @@
     	apt-get update
       
     	apt-get -y install autoconf automake devscripts gawk g++ git-core libjpeg62-dev libncurses5-dev libtool make python-dev \
-    	gawk pkg-config libtiff4-dev libperl-dev libgdbm-dev libdb-dev gettext sudo lua5.1 chkconfig mysql-server apache2 \
+    	gawk pkg-config libperl-dev libgdbm-dev libdb-dev gettext sudo lua5.1 chkconfig mysql-server apache2 \
     	apache2-threaded-dev php5 php5-dev php5-common php5-cli php5-gd php-pear php5-mysql php5-cli php-apc php5-curl libapache2-mod-php5 \
     	perl libapache2-mod-perl2 libxml2 libxml2-dev openssl libcurl4-openssl-dev gettext libtool gcc g++ ntp ntpdate libspeexdsp-dev \
     	libldns-dev libsqlite3-dev libpcre3-dev mysql-server php5-mysql chkconfig ntpdate ntp
@@ -52,7 +52,7 @@
     ./bootstrap.sh -j
 
 * Edit modules.conf
-    Enable mod_xml_curl, mod_xml_cdr, mod_perl
+    Enable mod_xml_curl, mod_xml_cdr, mod_perl (if you want to use Calling Card feature)
 
 * Compile the Source
     ./configure
@@ -142,35 +142,37 @@
        chmod -Rf 777 /var/www/cgi-bin/astpp
        
        cp /usr/src/trunk/freeswitch/astpp-callingcards.pl <FreeSWITCH_SCRIPTS_DIR>/astpp-callingcards.pl
-       cp -rf /usr/src/trunk/sounds/*.wav /usr/local/freeswitch/sounds/en/us/callie//
+       cp -rf /usr/src/trunk/sounds/*.wav /usr/local/freeswitch/sounds/en/us/callie/
        chmod -Rf 777 /usr/local/freeswitch/sounds/en/us/callie/
 
      6. Install ASTPP web interface
        
-       cp /usr/src/trunk/astpp_confs/sample.astpp-config.conf /var/lib/astpp//astpp-config.conf
-       cp /usr/src/trunk/astpp_confs/sample.reseller-config.conf /var/lib/astpp//sample.reseller-config.conf
+       cp /usr/src/trunk/astpp_confs/sample.astpp-config.conf /var/lib/astpp/astpp-config.conf
+       cp /usr/src/trunk/astpp_confs/sample.reseller-config.conf /var/lib/astpp/sample.reseller-config.conf
        
-       mkdir -p /var/www//html/astpp
-       cp -rf /usr/src/trunk/web_interface/astpp/* /var/www//html/astpp/
-       cp /usr/src/trunk/web_interface/astpp/htaccess /var/www//html/astpp/.htaccess
+       mkdir -p /var/www/html/astpp
+       cp -rf /usr/src/trunk/web_interface/astpp/* /var/www/html/astpp/
+       cp /usr/src/trunk/web_interface/astpp/htaccess /var/www/html/astpp/.htaccess
        
        [Debian]
-       chown -Rf www-data.www-data /var/www//html/astpp			
-       cp /usr/src/trunk/web_interface/apache/astpp.conf /etc/apache2/conf.d/astpp.conf
+       chown -Rf www-data.www-data /var/www/html/astpp			
+       cp /usr/src/trunk/web_interface/apache/astpp.conf /etc/apache2/sites-available/astpp.conf
+       a2ensite astpp (Ubuntu)
+	     or
+       a2ensite astpp.conf (Debian)
+       /etc/init.d/apache2 reload
        
        [CentOS]
-       chown -Rf apache.apache /var/www//html/astpp
+       chown -Rf apache.apache /var/www/html/astpp
        cp /usr/src/trunk/web_interface/apache/astpp.conf /etc/httpd/conf.d/astpp.conf
        
-       chmod -Rf 777 /var/www//html/astpp
+       chmod -Rf 777 /var/www/html/astpp
 
     7. Start Services
        
        1. Apache
        
           [Debian]
-	      /usr/sbin/a2ensite astpp
-	      /etc/init.d/apache2 reload
               /etc/init.d/apache2 restart
           [CentOS]  
               /etc/init.d/httpd restart
@@ -197,8 +199,7 @@
        GRANT ALL PRIVILEGES ON astpp.* TO astppuser@localhost IDENTIFIED BY '<SET YOUR PASSWORD>';         
        flush privileges; 
        
-       mysql -uroot -p<PASSWORD> astpp < /usr/src/trunk/sql/astpp-1.7.3-beta.sql
-       mysql -uroot -p<PASSWORD> astpp < /usr/src/trunk/sql/astpp-upgrade-1.7.3.sql
+       mysql -uroot -p<PASSWORD> astpp < /usr/src/trunk/sql/astpp-2.0.sql
        
        Enter appropriate values in prompt
 	
@@ -208,7 +209,7 @@
        You are done with GUI installation. Enjoy :)
 
        Visit the astpp admin page in your web browser. It can be found here: http://server_ip:8081/ Please change the ip address depending upon   	 your box. 
-       The default password is " Passw0rd! ". you do not need to enter username.    
+       The default username/password is "admin/admin"    
        Note : In case of any issue please refer apache error log.    
 
     10. ASTPP Freeswitch Configuration

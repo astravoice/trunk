@@ -465,7 +465,8 @@ class common {
     function set_calltype($type = '') {
         $status_array = array("" => "--Select Type--",
             "STANDARD" => "STANDARD",
-            "DID" => "DID"
+            "DID" => "DID",
+            "CALLINGCARD"=>"CALLINGCARD"
         );
         return $status_array;
     }
