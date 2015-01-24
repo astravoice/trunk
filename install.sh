@@ -711,8 +711,8 @@ astpp_install () {
 	clear
 	echo " you can login on "
 	echo "http://${ASTPP_HOST_DOMAIN_NAME}:8081 "
-	echo "Username= Leave empty "
-	echo "Password= Passw0rd! "
+	echo "Username= admin "
+	echo "Password= admin "
 
 	sleep 10
 	echo ""	
