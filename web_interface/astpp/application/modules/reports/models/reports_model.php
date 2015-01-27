@@ -34,7 +34,7 @@ class Reports_model extends CI_Model {
 		$account_data = $this->session->userdata("accountinfo");
 		$where = array("reseller_id" => $account_data['id'],'callstart >= '=>$start_date,'callstart <='=>$end_date,'type'=>'0');
 	    } else {
-		$where = array('reseller_id' => '0','callstart >= '=>$start_date,'callstart <='=>$end_date,'type'=>'0');
+		$where = array('reseller_id' => '0','callstart >= '=>$start_date,'callstart <='=>$end_date);
 	    }
         }
         else{
@@ -42,7 +42,7 @@ class Reports_model extends CI_Model {
 		$account_data = $this->session->userdata("accountinfo");
 		$where = array("reseller_id" => $account_data['id'],'type'=>'0');
 	    } else {
-		$where = array("reseller_id" => "0",'type'=>'0');
+		$where = array("reseller_id" => "0");
 	    }
         }
         if ($flag) {
@@ -515,7 +515,7 @@ class Reports_model extends CI_Model {
        $this->db_model->build_search('customersummary_reports_search');
        $reseller_id = $this->session->userdata('logintype') == 1 || $this->session->userdata('logintype') == 5 ? $this->session->userdata['accountinfo']['id'] :0;
        if($this->session->userdata('advance_search') != 1){
-		$where = array('reseller_id' =>$reseller_id,'callstart >= '=>date('Y-m-d')." 00:00:01",'callstart <='=>date("Y-m-d")." 23:59:59","type"=>0);
+		$where = array('reseller_id' =>$reseller_id,'callstart >= '=>date('Y-m-d')." 00:00:01",'callstart <='=>date("Y-m-d")." 23:59:59");
        }
        else{
 		$where = array("reseller_id" =>$reseller_id,"type"=>0);

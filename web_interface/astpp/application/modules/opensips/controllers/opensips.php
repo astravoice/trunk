@@ -88,17 +88,19 @@ class Opensips extends MX_Controller {
                 exit;
             } else {
                 $this->opensips_model->edit_opensipsdevices($add_array, $add_array['id']);
-                echo json_encode(array("SUCCESS"=> " OpenSips Updated Successfully!"));
+                echo json_encode(array("SUCCESS"=> " OpenSips updated successfully!"));
                 exit;
             }
         } else {
             $data['page_title'] = 'Add Opensips';
             if ($this->form_validation->run() == FALSE) {
                 $data['validation_errors'] = validation_errors();
+		echo $data['validation_errors'];
+                exit;
             } else {
 
                 $this->opensips_model->add_opensipsdevices($add_array);
-                echo json_encode(array("SUCCESS"=> "OpenSips Added Successfully!"));
+                echo json_encode(array("SUCCESS"=> "OpenSips added successfully!"));
                 exit;
             }
         }
@@ -175,7 +177,7 @@ class Opensips extends MX_Controller {
     function opensips_list_json() {
         $json_data = array();
         $count_all = $this->opensips_model->getopensipsdevice_list(false);
-        $paging_data = $this->form->load_grid_config($count_all, $_GET['rp']=10, $_GET['page']=1);
+        $paging_data = $this->form->load_grid_config($count_all, $_GET['rp'], $_GET['page']);
         $json_data = $paging_data["json_paging"];
 
         $query = $this->opensips_model->getopensipsdevice_list(true, $paging_data["paging"]["start"], $paging_data["paging"]["page_no"]);

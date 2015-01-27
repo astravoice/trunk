@@ -5,12 +5,11 @@
     $(document).ready(function() {
       
         build_grid("invoice_grid","",<? echo $grid_fields; ?>,"");
-        $("#inbound_search_btn").click(function(){
-            alert("sddddd");
-            post_request_for_search("invoice_grid","<?php echo base_url(); ?>rates/user_inboundrates_list_search/","inbound_search");
+        $("#invoice_search_btn").click(function(){
+            post_request_for_search("invoice_grid","","invoice_search");
         });        
         $("#id_reset").click(function(){
-            clear_search_request("invoice_grid","<?php echo base_url(); ?>rates/user_inboundrates_list_clearsearchfilter/");
+            clear_search_request("invoice_grid","");
         });
             jQuery("#date").datetimepicker({format:'Y-m-d H:i:s'});	
         jQuery("#invoice_date").datetimepicker({format:'Y-m-d H:i:s'});	

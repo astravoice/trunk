@@ -319,8 +319,7 @@ CREATE TABLE `cdrs` (
   `waitmsec` int(11) NOT NULL DEFAULT '0',
   `progress_mediamsec` int(11) NOT NULL DEFAULT '0',
   `flow_billmsec` int(11) NOT NULL DEFAULT '0',
-  UNIQUE KEY `uniqueid_2` (`uniqueid`),
-  KEY `uniqueid` (`uniqueid`),
+  UNIQUE KEY `uniqueid` (`uniqueid`),
   KEY `user_id` (`accountid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='cdrs';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1171,8 +1170,7 @@ CREATE TABLE `reseller_cdrs` (
   `reseller_code_destination` varchar(80) NOT NULL DEFAULT '',
   `reseller_cost` decimal(20,6) NOT NULL DEFAULT '0.000000',
   `call_direction` enum('outbound','inbound') NOT NULL,
-  UNIQUE KEY `uk_uniquekey` (`uniqueid`,`accountid`),
-  KEY `uniqueid` (`uniqueid`),
+  UNIQUE KEY `uk_uniquekey` (`uniqueid`,`reseller_id`),
   KEY `reseller_id` (`accountid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='cdrs';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1474,6 +1472,10 @@ CREATE TABLE `taxes` (
   PRIMARY KEY (`id`),
   KEY `taxes_priority` (`taxes_priority`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `taxes` CHANGE `last_modified` `last_modified` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00';
+ALTER TABLE `taxes` CHANGE `date_added` `date_added` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00';
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

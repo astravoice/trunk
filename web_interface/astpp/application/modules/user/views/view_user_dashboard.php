@@ -127,11 +127,13 @@ function get_package_data(){
  				  if(i==0){
  				    str=str+"<th style='text-align:center;'>"+custom_data[i].package_name+"</th>";
  				    str=str+"<th style='text-align:center;'>"+custom_data[i].includedseconds+"</th>";
+ 				    str=str+"<th style='text-align:center;'>"+custom_data[i].status+"</th>";
 //  				    str=str+"<th style='text-align:center;'>"+custom_data[i].credit+"</th>";
  				  }else{
  				    str=str+"<td style='text-align:center;'>"+custom_data[i].package_name+"</td>";
 				    str=str+"<td style='text-align:center;'>"+custom_data[i].includedseconds+"</td>";
 //  				    str=str+"<td style='text-align:center;'>"+custom_data[i].credit+"</td>";
+                                   str=str+"<td style='text-align:center;'>"+custom_data[i].status+"</td>";
  				  }
  				  str=str+"</tr>";
 			  }   

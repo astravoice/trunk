@@ -5,14 +5,15 @@ class Opensips_form{
     }
     
     function get_opensips_form_fields() {
-
+            $accountinfo = $this->CI->session->userdata("accountinfo");
+            $loginid=$this->CI->session->userdata('logintype')==2 ? 0:$accountinfo['id'];
         $form['forms'] = array(base_url() . 'opensips/opensips_save/',array("id"=>"opensips_form","name"=>"opensips_form"));
         $form['Opensips Device'] = array(
             array('', 'HIDDEN', array('name'=>'id'),'', '', '', ''), 
             array('Username', 'INPUT', array('name' => 'username','size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|required', 'tOOL TIP', ''),
             array('password', 'PASSWORD', array('name' => 'password','size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|required', 'tOOL TIP', ''),
-            array('Account', 'accountcode', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'number', 'number', 'accounts', 'build_dropdown', 'where_arr', array("reseller_id" => "0","type"=>"0", "deleted" => "0")),
-            array('Rate Group', 'pricelist_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'name', 'pricelists', 'build_dropdown', 'reseller_id', '0'),
+             array('Account', 'accountcode', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'number', 'number', 'accounts', 'build_dropdown', 'where_arr', array("reseller_id" => $loginid,"type"=>"GLOBAL", "deleted" => "0")),
+            array('Rate Group', 'pricelist_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'name', 'pricelists', 'build_dropdown', 'where_arr',array("reseller_id" => $loginid,'status'=>0)),
             array('Domain', 'INPUT', array('name' => 'domain','size' => '20', 'maxlength' => '15', 'class' => "text field medium"), '', 'tOOL TIP', '')
             
          );
@@ -113,24 +114,27 @@ class Opensips_form{
         }else{
             $link = base_url().'opensips/opensips_save/true';
         }
+        $accountinfo = $this->CI->session->userdata("accountinfo");
+        $loginid=$this->CI->session->userdata('logintype')==2 ? 0:$accountinfo['id'];
          $form['forms'] = array($link,array("id"=>"opensips_form","name"=>"opensips_form"));
          $form['Opensips Device'] = array(
             array('', 'HIDDEN', array('name'=>'id'),'', '', '', ''), 
             array('', 'HIDDEN', array('name' => 'accountcode','value'=>$this->CI->common->get_field_name('number','accounts',array('id'=>$accountid))), '', '', '', ''),
             array('Username', 'INPUT', array('name' => 'username','size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|required', 'tOOL TIP', 'Please Enter account number'),
             array('password', 'PASSWORD', array('name' => 'password','size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|required', 'tOOL TIP', 'Please Enter account number'),
-            array('Rate Group', 'pricelist_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'name', 'pricelists', 'build_dropdown', 'reseller_id', '0'),
+            array('Rate Group', 'pricelist_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'name', 'pricelists', 'build_dropdown', 'where_arr',array("reseller_id" => $loginid,'status'=>0)),
             
             array('Domain', 'INPUT', array('name' => 'domain','size' => '20', 'maxlength' => '15', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter account number')
             
          );
-        $form['button_save'] = array('name' => 'action', 'content' =>'Save' , 'value' => 'save', 'type' => 'button','id'=>'submit', 'class' => 'ui-state-default float-right ui-corner-all ui-button');
-        $form['button_cancel'] = array('name' => 'action', 'content' => 'Cancel', 'value' => 'cancel', 'type' => 'button', 'class' => 'ui-state-default float-right ui-corner-all ui-button', 'onclick' => 'return redirect_page(\'NULL\')');
+        $form['button_save'] = array('name' => 'action', 'content' =>'Save' , 'value' => 'save', 'type' => 'button','id'=>'submit', 'class' => 'btn btn-line-parrot');
+        $form['button_cancel'] = array('name' => 'action', 'content' => 'Cancel', 'value' => 'cancel', 'type' => 'button', 'class' => 'btn btn-line-sky margin-x-10', 'onclick' => 'return redirect_page(\'NULL\')');
         return $form;
     }
     function opensips_customer_build_grid_buttons($accountid) {
-        $buttons_json = json_encode(array(array("Add Devices", "add", "button_action", "/opensips/customer_opensips_add/$accountid/","popup"),
-            array("Refresh", "reload", "/accounts/clearsearchfilter/")));
+        $buttons_json = json_encode(array(array("Add Devices", "btn btn-line-warning btn" , "fa fa-plus-circle fa-lg", "button_action", "/opensips/customer_opensips_add/$accountid/","popup"),
+            //array("Refresh", "reload", "/accounts/clearsearchfilter/")
+));
         return $buttons_json;
     }
        function opensips_customer_build_opensips_list($accountid){

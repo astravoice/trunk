@@ -390,8 +390,8 @@ array('', 'HIDDEN', 'ajax_search', '1', '', '', ''),array('', 'HIDDEN', 'advance
             array("ACD","70","acd  ",'','',''),
             array("MCD","80","mcd",'','',''),
             array("Bilable","80","billable",'','',''),
-            array("Price","110","price",'','',''),
-            array("Cost","85","cost",'','',''),
+            array("debit","85","cost",'','',''),
+            array("cost","110","price",'','',''),            
             array("Profit", "123", "profit", "", "", ""),
             ));
         return $grid_field_arr;

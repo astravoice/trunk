@@ -531,8 +531,8 @@ class Reports extends MX_Controller {
                     round($acd/60, 2),
                     round($mcd/60, 2),                        
                     round($bill/60, 2),                        
-                    $this->common_model->calculate_currency($row1["price"]),
                     $this->common_model->calculate_currency($cost),
+                    $this->common_model->calculate_currency($row1["price"]),
                     $this->common_model->calculate_currency($profit)));
                 }
         }

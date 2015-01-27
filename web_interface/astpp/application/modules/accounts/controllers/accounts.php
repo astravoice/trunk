@@ -2211,19 +2211,19 @@ else
         }
     }
 
-    function customer_opensips_action($action, $id, $accountid) {
+    function customer_opensips_action($action,$accountid,$id) {
       $entity_type =$this->common->get_field_name('type','accounts',array('id'=>$accountid));
        $entity_type =strtolower($this->common->get_entity_type('','',$entity_type));
        $url ="accounts/". $entity_type."_edit/$accountid#accounts";
         $this->load->module('opensips/opensips');
         if ($action == "delete") {
             $this->session->set_flashdata('astpp_notification', 'Opensip removed successfully!');
-            $this->opensips->opensips_model->remove_opensips($accountid);
+            $this->opensips->opensips_model->remove_opensips($id);
             redirect(base_url() . $url);
         }
         if ($action == "edit") {
 	    $this->session->set_flashdata('astpp_errormsg', 'Opensip updated successfully!');	    
-            $this->opensips->customer_opensips_edit($id, $accountid);
+            $this->opensips->customer_opensips_edit($accountid,$id);
         }
     }
 

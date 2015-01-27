@@ -51,10 +51,12 @@ class User extends MX_Controller {
     if($result->num_rows() > 0){
 	$json_data[0]['package_name']='Package Name';
 	$json_data[0]['includedseconds']='Included Seconds';
+	$json_data[0]['status']='Status';
      $result=$result->result_array();
      foreach($result as $data){
 	    $json_data[$i]['package_name']=$data['package_name'];
 	    $json_data[$i]['includedseconds']=$data['includedseconds'];
+	     $json_data[$i]['status']=$this->common->get_status('','',$data['status']);
 	    $i++;
      }
     }
@@ -240,6 +242,23 @@ class User extends MX_Controller {
         $account_data = $this->session->userdata("accountinfo");
         $this->load->module('invoices/invoices');
         $this->invoices->user_invoices($account_data["id"]);
+    }
+    function user_invoice_list_search(){
+	$ajax_search = $this->input->post('ajax_search', 0);
+        if ($this->input->post('advance_search', TRUE) == 1) {
+            $this->session->set_userdata('advance_search', $this->input->post('advance_search'));
+            $action = $this->input->post();
+            unset($action['action']);
+            unset($action['advance_search']);
+            $this->session->set_userdata('invoice_list_search', $action);
+        }
+        if (@$ajax_search != 1) {
+            redirect(base_url() . 'user/user_invoice_list/');
+        }
+    }
+    function user_invoice_list_clearsearchfilter() {
+        $this->session->set_userdata('advance_search', 0);
+        $this->session->set_userdata('invoice_list_search', "");
     }
     function user_invoice_download($invoiceid){
 	$this->load->module('invoices/invoices');

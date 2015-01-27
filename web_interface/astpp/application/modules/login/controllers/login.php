@@ -126,7 +126,7 @@ class Login extends MX_Controller {
             $currency = $this->db_model->getSelect('currency,currencyrate', 'currency', array("id"=>$account_data["currency_id"]));
             $currency = $currency->result_array();
             $currency =$currency[0];
-            $balance_amt = $this->common_model->add_calculate_currency($balance_amt,'',$currency["id"],false,false);
+//            $balance_amt = $this->common_model->add_calculate_currency($balance_amt,'',$currency["id"],false,false);
             $date = date('Y-m-d H:i:s');
             $payment_trans_array = array("accountid"=>$response_arr["item_number"],"amount"=>$response_arr["payment_gross"],
                 "tax"=>"1","payment_method"=>"Paypal","actual_amount"=>$actual_amount,"paypal_fee"=>$paypalfee,

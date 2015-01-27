@@ -149,6 +149,8 @@ sub xml_process()
         }
         $origination_dp_string = $origination_dp_string."||".$origination_dp_string_reseller;
         
+        $minimumcharge = $origination_rates_info->{cost};
+        
         &set_max_channels(name=>$carddata->{number},maxchannels=>$carddata->{maxchannels}) if ($astpp_calltype eq 'ASTPP-STANDARD');        
     }
 

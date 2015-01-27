@@ -484,6 +484,11 @@ function build_concat_select_dropdown($select, $table, $id_where = '', $id_value
     function build_dropdown($select, $table, $id_where = '', $id_value = '') {
         $select_params = explode(',', $select);
         $where = '';
+        if(isset($id_value["type"]) && $id_value["type"] == "GLOBAL"){
+            $where = "type IN ('0','3')";
+            $this->db->where($where);
+            unset($id_value["type"]);
+        }
         if ($id_where != '' && $id_value != '') {
             if ($id_where == 'group_by') {
                 $this->db->group_by($id_value);

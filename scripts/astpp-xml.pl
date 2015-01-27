@@ -160,6 +160,14 @@ sub fs_dialplan_xml_bridge() {
 	if ($arg{termination_rate}->{dialed_modify} && $arg{termination_rate}->{dialed_modify} ne "") {
         $arg{destination_number}= &number_translation('destination_number'=>$arg{destination_number},'translation'=>$arg{termination_rate}->{dialed_modify});
 	}	
+		
+	if ($arg{termination_rate}->{strip} && $arg{termination_rate}->{strip} ne "") {
+        $arg{destination_number}= &number_translation('destination_number'=>$arg{destination_number},'translation'=>"$arg{termination_rate}->{strip}/");
+	}
+	
+	if ($arg{termination_rate}->{prepend} && $arg{termination_rate}->{prepend} ne "") {
+        $arg{destination_number}= $arg{termination_rate}->{prepend} . $arg{destination_number};
+	}
 	
 	$xml .= "<action application=\"set\" data=\"effective_destination_number=$arg{destination_number}\"/>\n";	
     $xml .= "<action application=\"set\" data=\"termination_rates=".$arg{termination_dp_string}."\"/>\n";
@@ -170,14 +178,15 @@ sub fs_dialplan_xml_bridge() {
 	}
 	
 	$xml .= ($arg{termination_rate}->{codec} ne '') ? "<action application=\"set\" data=\"absolute_codec_string=".$arg{termination_rate}->{codec}."\"/>\n" : '';	
+				
 	$xml .= "<action application=\"bridge\" data=\"";	
-	$xml .= "sofia/gateway/" . $arg{termination_rate}->{path} . "/" . $arg{termination_rate}->{prepend} . $arg{destination_number};
+	$xml .= "sofia/gateway/" . $arg{termination_rate}->{path} . "/" . $arg{destination_number};
 	$xml .= "\"/>\n";
 	
 	if (defined($arg{termination_rate}->{path2}) && $arg{termination_rate}->{path2} ne $arg{termination_rate}->{path})
 	{
     	$xml .= "<action application=\"bridge\" data=\"";	
-    	$xml .= "sofia/gateway/" . $arg{termination_rate}->{path2} . "/" . $arg{termination_rate}->{prepend} . $arg{destination_number};
+    	$xml .= "sofia/gateway/" . $arg{termination_rate}->{path2} . "/" . $arg{destination_number};
     	$xml .= "\"/>\n";
 	}
 	
