@@ -34,33 +34,31 @@ class Currencyupdate extends CI_Controller {
 
         if($query->num_rows >0){
             $currency_data =$query->result_array();
-		$url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=";
-		foreach ($currency_data as $currency_value) {
-		    $url .= $currency_value['currency'].'+';
-		}
-		$url .= '&f=l1';
-		$sql='';
-		$response = $this->curl_response($url);
-		$content_data = explode(' ',$response);
-//  		echo "<pre>";print_r($content_data);exit;
+    		$url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=";
+	    	foreach ($currency_data as $currency_value) {
+	    	    $url .= Common_model::$global_config['system_config']['base_currency'].$currency_value['currency'].'=X+';
+	    	}
+	    	$url .= '&f=l1';
 
-		foreach ($content_data as $content_data1){
-		   $currency_arr= explode("\n", $content_data1);
-		    foreach($currency_arr as $final_val)
-		    {
-			$currency_final[]= explode(',', $final_val);
-		    }
-		}
-		foreach($currency_final as $insert_array)
-		{
-// 		
-			  if($insert_array[1] != '' || $insert_array[4] != ''){
-			    $sql = "UPDATE currency SET currencyRate = ".$insert_array[1]." WHERE currency = ".$insert_array[4];
-			    $this->db->query($sql);
-			  }
-		}
-	  }
-	      $this->session->set_flashdata("astpp_errormsg", "All Currency Update Successfully...");
+	    	$sql='';
+	    	$response = $this->curl_response($url);
+	    	$content_data = explode(' ',$response);
+
+	    	foreach ($content_data as $content_data1){
+	    	   $currency_arr= explode("\n", $content_data1);
+	    	    foreach($currency_arr as $final_val)
+	    	    {
+	    	        $currency_final = array();
+	    		    $currency_final= explode(',', $final_val);
+	    		    if($currency_final[1] != "" && $currency_final[0]!='')
+	    		    {
+    	    		    $sql = "UPDATE currency SET currencyRate = ".$currency_final[1]." WHERE currency = '".substr($currency_final[0],4,3)."'";
+    	    		    $this->db->query($sql);
+	    		    }
+	    	    }
+	    	}
+      }
+	      $this->session->set_flashdata("astpp_errormsg", "Currency exchange rates successfully updated.");
 	      redirect(base_url()."/systems/currency_list/");
 	      exit;
 	}

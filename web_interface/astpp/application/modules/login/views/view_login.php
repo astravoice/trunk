@@ -13,6 +13,11 @@
      <!-- IE -->
     <script type="text/javascript" src="<?php echo base_url();?>assets/js/respond.js"></script>
     <script type="text/javascript" src="<?php echo base_url();?>assets/js/respond.src.js"></script>
+    <noscript>
+	 <div id="noscript-warning">
+	  ASTPP work best with JavaScript enabled
+	</div>
+    </noscript>
     <style>
     .form-control{
      height:40px;

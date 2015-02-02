@@ -11,8 +11,8 @@
         $("#id_reset").click(function(){
             clear_search_request("invoice_grid","");
         });
-            jQuery("#date").datetimepicker({format:'Y-m-d H:i:s'});	
-        jQuery("#invoice_date").datetimepicker({format:'Y-m-d H:i:s'});	
+            jQuery("#date").datetimepicker({format:'Y-m-d'});	
+        jQuery("#invoice_date").datetimepicker({format:'Y-m-d'});	
     });
 </script>
 	

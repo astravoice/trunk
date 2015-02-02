@@ -164,8 +164,7 @@ $where_arr=array('accountid'=>$accountid);
    	    $this->db->insert('invoice_conf',$post_array);
 	}
         return true;
-        }
-
+    }
     function get_invoiceconf() {
         $accountdata = $this->session->userdata('accountinfo');
         $accountid = $accountdata['id'];
@@ -187,8 +186,8 @@ $where_arr=array('accountid'=>$accountid);
 		$this->db->from('cdrs');
 		$query = $this->db->get();
 		return $query;
-	}
-        function get_account_including_closed($accountdata)
+    }
+    function get_account_including_closed($accountdata)
 	{
 		$q = "SELECT * FROM accounts WHERE number = '".$this->db->escape_str($accountdata)."'";
 		$query = $this->db->query($q);		
@@ -206,6 +205,18 @@ $where_arr=array('accountid'=>$accountid);
 		}
 
 		return NULL;
-	}
+    }
+    function get_user_invoice_list($flag, $start = 0, $limit = 0){
+	$this->db_model->build_search('invoice_list_search');
+	$accountinfo=$this->session->userdata('accountinfo');
+        $where = array("accountid" => $accountinfo['id']);
+        if ($flag) {
+            $query = $this->db_model->select("*", "invoices", $where, "invoice_date", "desc", $limit, $start);
+        } else {
+            $query = $this->db_model->countQuery("*", "invoices", $where);
+        }
+//         echo $this->db->last_query();exit;
+        return $query;
+    }
 
 }

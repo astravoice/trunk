@@ -44,11 +44,13 @@ foreach my $param ( param() ) {
     $params->{$param} = param($param);
 }
 
+my $xml = header( -type => 'text/plain' );
+
 if ( $params->{cdr} ) { # PROCESS CDRs.
       print header( -type => 'text/plain' );
 	  
       # create object
-      my $xml = new XML::Simple;
+      $xml = new XML::Simple;
 
       # read XML file
       $data = $xml->XMLin($params->{cdr});
@@ -72,8 +74,10 @@ if ( $params->{cdr} ) { # PROCESS CDRs.
           my $parentid = ($data->{variables}->{resellerid} or '0');
           my $parent_cost = 0;
           my $cost = 0;
-          $data->{variables}->{package_id} = 0;
+          $data->{variables}->{package_id} = 0;         
           my $actual_duration = $data->{variables}->{duration};
+          my $actual_calltype = $data->{variables}->{calltype};
+          
           
           #normalize origination rates     
           my ($origination_rate) = &normalize_origination_rate($data->{variables}->{origination_rates});
@@ -115,7 +119,7 @@ if ( $params->{cdr} ) { # PROCESS CDRs.
           &insert_update_query("Customer CDR","INSERT INTO cdrs(uniqueid,accountid,type,callerid,callednum,billseconds,trunk_id,trunkip,callerip,disposition,callstart,debit,cost,provider_id,pricelist_id,package_id,pattern,notes,rate_cost,reseller_id,reseller_code,reseller_code_destination,reseller_cost,provider_code,provider_code_destination,provider_cost,provider_call_cost,call_direction,calltype,profile_start_stamp,answer_stamp,bridge_stamp,progress_stamp,progress_media_stamp,end_stamp,billmsec,answermsec,waitmsec,progress_mediamsec,flow_billmsec) values ($cdr_string)");
                              
           #update customer balance          
-          &update_balance(accountid=>$accountid,amount=>$debit) if ($debit > 0);
+          &update_balance(accountid=>$accountid,amount=>$debit) if ($debit > 0 && $data->{variables}->{calltype} ne "FREE");
           
           #update provider balance
           &update_balance(accountid=>$termination_rate->{PROVIDER},amount=>($parent_cost*-1)) if ($parent_cost > 0);
@@ -124,6 +128,7 @@ if ( $params->{cdr} ) { # PROCESS CDRs.
           while ( $parentid > 0 ) {
     
                 $data->{variables}->{package_id} = 0;
+                $data->{variables}->{calltype} = $actual_calltype;
                 
                 #get reseller information    
                 my $carddata = &get_account(field=>"id",value=>$parentid);
@@ -147,7 +152,7 @@ if ( $params->{cdr} ) { # PROCESS CDRs.
                 &insert_update_query("Reseller CDR","INSERT INTO reseller_cdrs (uniqueid,accountid,callerid,callednum,billseconds,disposition,callstart,debit,cost,pricelist_id,package_id,pattern,notes,rate_cost,reseller_id,reseller_code,reseller_code_destination,reseller_cost,call_direction,calltype) values ($cdr_string)");                              
                
                #update balance of reseller 
-               &update_balance(accountid=>$carddata->{id},amount=>$debit) if ($debit > 0);;
+               &update_balance(accountid=>$carddata->{id},amount=>$debit) if ($debit > 0 && $data->{variables}->{calltype} ne "FREE");
          }                                                            
          &logger("========================== CDR Ends : ".$data->{variables}->{effective_destination_number}."=====================");
      }   

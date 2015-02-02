@@ -110,17 +110,12 @@ class Invoices extends MX_Controller {
     }
     function user_invoices($accountid){
         $json_data = array();
-        $where = array('accountid' => $accountid);
-        $count_all = $this->db_model->countQuery("*","invoices",$where);
-        
+	$count_all = $this->invoices_model->get_user_invoice_list(false);
         $paging_data =  $this->form->load_grid_config($count_all, $_GET['rp'], $_GET['page']);
         $json_data = $paging_data["json_paging"];
-	
-        $Invoice_grid_data = $this->db_model->select("*","invoices",$where,"invoice_date","desc",$paging_data["paging"]["page_no"],$paging_data["paging"]["start"]);
+        $query = $this->invoices_model->get_user_invoice_list(true,$paging_data["paging"]["start"], $paging_data["paging"]["page_no"]);
         $grid_fields= json_decode($this->invoices_form->build_invoices_list_for_customer());
-        
-        $json_data['rows'] = $this->form->build_grid($Invoice_grid_data,$grid_fields);
-        
+        $json_data['rows'] = $this->form->build_grid($query,$grid_fields);
         echo json_encode($json_data);
     }
     
@@ -576,7 +571,7 @@ class Invoices extends MX_Controller {
 	
 
         //To output the file to the folder.
-        $download_path = 'invoice_'.date('dmY').".pdf";
+        $download_path = 'Invoice_'.date('Y-m-d').".pdf";
         $this->fpdf->Output($download_path, "D");
         
     }
@@ -861,7 +856,7 @@ class Invoices extends MX_Controller {
 	
 
         //To output the file to the folder.
-        $download_path = 'Receipt'.date('dmY').".pdf";
+        $download_path = 'Receipt_'.date('Y-m-d').".pdf";
         $this->fpdf->Output($download_path, "D");
         
     } 
@@ -918,8 +913,8 @@ class Invoices extends MX_Controller {
             $action = $this->input->post();
             unset($action['action']);
             unset($action['advance_search']);
-	    $action['from_date'][0]=$action['from_date'][0] ? $action['from_date'][0]." 00:00" :'';
- 	    $action['invoice_date'][0]=$action['invoice_date'][0] ? $action['invoice_date'][0]." 00:00" : '';
+            $action['from_date'][0]=$action['from_date'][0] ? $action['from_date'][0]." 00:00:00" :'';
+ 	    $action['invoice_date'][0]=$action['invoice_date'][0] ? $action['invoice_date'][0]." 00:00:00" : '';
             $this->session->set_userdata('invoice_list_search', $action);
         }
         if (@$ajax_search != 1) {

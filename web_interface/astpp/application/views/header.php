@@ -33,6 +33,11 @@
     <script type="text/javascript" src="<?php echo base_url();?>assets/js/facebox.js"></script>
     <script type="text/javascript" src="<?php echo base_url();?>assets/js/flexigrid.js"></script>
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/module_js/generate_grid.js"></script>
+    <noscript>
+      <div id="noscript-warning">
+	ASTPP work best with JavaScript enabled
+      </div>
+    </noscript>
 
 <!--<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
     <link href="<?php echo base_url(); ?>/assets/Notifier-Plugin/css/notifier.css" rel="stylesheet" />

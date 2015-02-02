@@ -250,6 +250,8 @@ class User extends MX_Controller {
             $action = $this->input->post();
             unset($action['action']);
             unset($action['advance_search']);
+            $action['from_date'][0]=$action['from_date'][0] ? $action['from_date'][0]." 00:00:00" :'';
+ 	    $action['invoice_date'][0]=$action['invoice_date'][0] ? $action['invoice_date'][0]." 00:00:00" : '';
             $this->session->set_userdata('invoice_list_search', $action);
         }
         if (@$ajax_search != 1) {
@@ -530,6 +532,70 @@ redirect(base_url() . "user/user_animap_list/");
             $this->freeswitch->customer_fssipdevices_add($account_data["id"]);
         }
     }
+
+
+ function user_opensips() {
+        $data['username'] = $this->session->userdata('user_name');
+        $data['page_title'] = 'Opensips List';
+        $data['search_flag'] = true; 
+        $this->load->module('opensips/opensips');
+        $data["fs_grid_buttons"] = $this->opensips->opensips_form->build_grid_buttons_for_user();
+        $data['grid_fields'] = $this->opensips->opensips_form->user_opensips();
+        $data['form_search'] =$this->form->build_serach_form($this->opensips->opensips_form->get_search_opensips_form());
+        $data['grid_title'] = "Opensips";
+//echo "<pre>"; print_r($data); exit;
+        $this->load->view('view_opensips_list', $data);
+    }
+    function user_opensips_json() {
+	$accountinfo = $this->session->userdata("accountinfo");
+        $json_data = array();
+        $this->load->module('opensips/opensips');
+        $count_all = $this->opensips_model->getopensipsdevice_customer_list(false, $accountinfo['id']);
+        $paging_data = $this->form->load_grid_config($count_all, $_GET['rp'], $_GET['page']);
+        $json_data = $paging_data["json_paging"];
+
+        $query = $this->opensips_model->getopensipsdevice_customer_list(true, $accountinfo['id'], $paging_data["paging"]["start"], $paging_data["paging"]["page_no"]);
+        $grid_fields = json_decode($this->opensips->opensips_form->user_opensips());
+        $json_data['rows'] = $this->form->build_grid($query, $grid_fields);
+
+        echo json_encode($json_data);
+    }
+    function user_opensips_clearsearchfilter() {
+        $this->session->set_userdata('advance_search', 0);
+        $this->session->set_userdata('opensipsdevice_list_search', "");
+    }
+
+    function user_opensips_search() {
+        $ajax_search = $this->input->post('ajax_search', 0);
+        if ($this->input->post('advance_search', TRUE) == 1) {
+            $this->session->set_userdata('advance_search', $this->input->post('advance_search'));
+            $action = $this->input->post();
+            unset($action['action']);
+            unset($action['advance_search']);
+            $this->session->set_userdata('opensipsdevice_list_search', $action);
+        }
+        if (@$ajax_search != 1) {
+            redirect(base_url() . 'user/user_opensips/');
+        }
+    }
+    function user_opensips_action($action, $id="") {
+	$accountinfo = $this->session->userdata("accountinfo");
+        $this->load->module('opensips/opensips');
+        if ($action == "delete") {
+            $this->opensips->opensips_model->delete_opensips_devices($id);
+            redirect(base_url() . "user/user_opensips/");
+        }
+        if ($action == "edit") {
+            $this->opensips->customer_opensips_edit($accountinfo['id'],$id);
+        }
+        if ($action == "add") {
+            $this->opensips->customer_opensips_add($accountinfo["id"]);
+        }
+    }
+
+
+
+
     
     function user_rates_list() {
         $data['username'] = $this->session->userdata('user_name');

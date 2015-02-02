@@ -82,7 +82,9 @@ class Opensips_model extends CI_Model {
         } else {
             $query = $this->opensips_db->get("dispatcher");
             $query = $query->num_rows();
+
         }
+//echo $this->opensips_db->last_query(); exit;
         return $query;
     }
 
@@ -102,6 +104,17 @@ class Opensips_model extends CI_Model {
         unset($data["action"]);
         $this->opensips_db->where("id", $id);
         $this->opensips_db->update("subscriber", $data);
+    }
+
+
+
+	 function delete_opensips_devices($id) {
+        $db_config = Common_model::$global_config['system_config'];
+        $opensipdsn = "mysql://" . $db_config['opensips_dbuser'] . ":" . $db_config['opensips_dbpass'] . "@" . $db_config['opensips_dbhost'] . "/" . $db_config['opensips_dbname'] . "?char_set=utf8&dbcollat=utf8_general_ci&cache_on=true&cachedir=";
+        $this->opensips_db = $this->load->database($opensipdsn, true);
+        $this->opensips_db->where("id", $id);
+        $this->opensips_db->delete("subscriber");
+        return true;
     }
 
     function remove_opensips($id) {
@@ -142,7 +155,7 @@ class Opensips_model extends CI_Model {
         return true;
     }
 
-    function build_search_opensips($accounts_list_search) {
+ function build_search_opensips($accounts_list_search) {
         if ($this->session->userdata('advance_search') == 1) {
             $account_search = $this->session->userdata($accounts_list_search);
             unset($account_search["ajax_search"]);
@@ -155,6 +168,7 @@ class Opensips_model extends CI_Model {
                         }
                         if (array_key_exists($key . "-string", $value)) {
                             $this->get_string_array($key, $value[$key . "-string"], $value[$key]);
+
                         }
                     } else {
                         $this->opensips_db->where($key, $value);

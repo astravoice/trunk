@@ -40,13 +40,13 @@ class Opensips extends MX_Controller {
     function opensips_add() {
         $data['username'] = $this->session->userdata('user_name');
         $data['flag'] = 'create';
-        $data['page_title'] = 'Opensips';
+        $data['page_title'] = 'Add Opensips';
         $data['form'] = $this->form->build_form($this->opensips_form->get_opensips_form_fields(), '');
 	$this->load->view('view_opensips_add_edit', $data);
     }
      
     function opensips_edit($edit_id = '') {
-        $data['page_title'] = 'Edit opensisp devices ';
+        $data['page_title'] = 'Edit Opensips ';
         $this->opensips_db->where('id', $edit_id);
         $account = $this->opensips_db->get("subscriber");
         foreach ($account->result_array() as $key => $value) {
@@ -58,7 +58,7 @@ class Opensips extends MX_Controller {
     }
 
     function customer_opensips_edit($accountid, $edit_id) {
-        $data['page_title'] = 'Edit opensisp devices';
+        $data['page_title'] = 'Edit Opensips';
         $where = array('id' => $edit_id);
         $this->opensips_db->where($where);
         $account = $this->opensips_db->get("subscriber");
@@ -71,7 +71,7 @@ class Opensips extends MX_Controller {
      function customer_opensips_add($accountid='') {
         $data['username'] = $this->session->userdata('user_name');
         $data['flag'] = 'create';
-        $data['page_title'] = 'Opensips';
+        $data['page_title'] = 'Add Opensips';
         $data['form'] = $this->form->build_form($this->opensips_form->get_opensips_form_fields_for_customer($accountid), '');
 
         $this->load->view('view_opensips_add_edit', $data);
@@ -81,7 +81,7 @@ class Opensips extends MX_Controller {
 
         $data['form'] = $this->form->build_form($this->opensips_form->get_opensips_form_fields(), $add_array);
         if ($add_array['id'] != '') {
-            $data['page_title'] = 'Edit opensisp devices';
+            $data['page_title'] = 'Edit Opensisp';
             if ($this->form_validation->run() == FALSE) {
                 $data['validation_errors'] = validation_errors();
                 echo $data['validation_errors'];
@@ -105,13 +105,41 @@ class Opensips extends MX_Controller {
             }
         }
     }
+function user_opensips_save($user_flg = false) {
+        $array_add = $this->input->post();
+//         print_r($array_add);exit;
+        $data['form'] = $this->form->build_form($this->opensips_form->get_opensips_form_fields_for_customer($array_add["accountcode"]), $array_add);
+        if ($array_add['id'] != '') {
+            $data['page_title'] = 'Edit Opensips';
+            if ($this->form_validation->run() == FALSE) {
+                $data['validation_errors'] = validation_errors();
+                echo $data['validation_errors'];
+                exit;
+            } else {
+                $this->opensips_model->edit_opensipsdevices($array_add, $array_add['id']);
+                echo json_encode(array("SUCCESS"=> "Opensips Updated Successfully!"));
+                exit;
+            }
+        }else{
+	      $data['page_title'] = 'Add Opensips';
+	      if ($this->form_validation->run() == FALSE) {
+                $data['validation_errors'] = validation_errors();
+                echo $data['validation_errors'];
+                exit;
+            }else{
+		$this->opensips_model->add_opensipsdevices($array_add);
+                echo json_encode(array("SUCCESS"=> "Opensips Added Successfully!"));
+                exit;
+	    }
+        }
+    }
 
     function customer_opensips_save($user_flg = false) {
         $array_add = $this->input->post();
 //         print_r($array_add);exit;
         $data['form'] = $this->form->build_form($this->opensips_form->get_opensips_form_fields_for_customer($array_add["accountcode"]), $array_add);
         if ($array_add['id'] != '') {
-            $data['page_title'] = 'Edit Account Details';
+            $data['page_title'] = 'Edit Opensips';
             if ($this->form_validation->run() == FALSE) {
                 $data['validation_errors'] = validation_errors();
                 echo $data['validation_errors'];
@@ -147,6 +175,7 @@ class Opensips extends MX_Controller {
 
         echo json_encode($json_data);
     }
+
 
     function opensips_add_customer($add_data) {
         $this->opensips_model->add_opensipsdevices($add_array);
@@ -276,7 +305,7 @@ class Opensips extends MX_Controller {
     function dispatcher_list_json() {
         $json_data = array();
         $count_all = $this->opensips_model->getopensipsdispatcher_list(false);
-        $paging_data = $this->form->load_grid_config($count_all, $_GET['rp']=10, $_GET['page']=1);
+        $paging_data = $this->form->load_grid_config($count_all, $_GET['rp'], $_GET['page']);
         $json_data = $paging_data["json_paging"];
 
         $query = $this->opensips_model->getopensipsdispatcher_list(true, $paging_data["paging"]["start"], $paging_data["paging"]["page_no"]);
@@ -285,7 +314,7 @@ class Opensips extends MX_Controller {
         echo json_encode($json_data);
     }
 
-    function dispatcher_search() {
+    function dispatcher_list_search() {
         $ajax_search = $this->input->post('ajax_search', 0);
         if ($this->input->post('advance_search', TRUE) == 1) {
             $this->session->set_userdata('advance_search', $this->input->post('advance_search'));
@@ -298,7 +327,7 @@ class Opensips extends MX_Controller {
         }
     }
 
-    function dispatcher_clearsearchfilter() {
+    function dispatcher_list_clearsearchfilter() {
         $this->session->set_userdata('advance_search', 0);
         $this->session->set_userdata('account_search', "");
     }

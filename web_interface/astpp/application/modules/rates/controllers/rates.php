@@ -700,7 +700,7 @@ class Rates extends MX_Controller {
                 }
             }
         $this->load->helper('csv');
-        array_to_csv($outbound_array, 'Termination_rates' . date("Y-m-d") . '.csv');
+        array_to_csv($outbound_array, 'Termination_Rates_' . date("Y-m-d") . '.csv');
     }
 
     function terminationrates_export_cdr_pdf() {

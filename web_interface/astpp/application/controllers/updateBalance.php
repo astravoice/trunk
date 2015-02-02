@@ -128,6 +128,9 @@ class UpdateBalance extends MX_Controller {
 	        if($user_account["posttoexternal"] == 0){
                     $invoiceid = $this->common_model->generate_receipt($user_account["id"],$charges_amt["charges"]);
                     $this->db->update("accounts",array("balance"=> "balance - ".$charges_amt["charges"]), array("id"=>$user_account["id"]));
+                    if($user_account["balance"] <= 0){
+                        $this->db->update("dids",array("accountid"=> "0"), array("id"=>$did_data["id"]));
+                    }
 	        }    
 	        $did_update_arr =  array("charge_upto"=>$charges_amt["upto_date"]);
                 $this->db->update("dids",$did_update_arr, array("id"=>$did_data["id"]));

@@ -109,7 +109,6 @@ sub update_balance()
 sub package_calculation()
 {
     my(%arg)=@_;
-    
     my $custom_destination = &custom_destination_number('destination_number'=>$arg{'destination_number'},'field'=>'patterns');
     
     my $package = &select_query("Package","SELECT * FROM packages inner join package_patterns on packages.id = package_patterns.package_id WHERE$custom_destination AND status = 0 AND pricelist_id = ". $arg{'origination_rate'}->{RATEGROUP} . " ORDER BY LENGTH(package_patterns.patterns) DESC LIMIT 1");
@@ -131,6 +130,7 @@ sub package_calculation()
 			$data->{variables}->{duration} = ($availableseconds >= $data->{variables}->{duration}) ? $data->{variables}->{duration} : $availableseconds;
 			&insert_update_query("Update counter","UPDATE counters SET seconds = ".($counter->{seconds} + $freeseconds ). " WHERE id = ". $counter->{id});
 			$data->{variables}->{package_id}=$package->{id};
+			$data->{variables}->{calltype} = "FREE";
 		}
 	}
 }

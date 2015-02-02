@@ -518,11 +518,11 @@ class Reports_model extends CI_Model {
 		$where = array('reseller_id' =>$reseller_id,'callstart >= '=>date('Y-m-d')." 00:00:01",'callstart <='=>date("Y-m-d")." 23:59:59");
        }
        else{
-		$where = array("reseller_id" =>$reseller_id,"type"=>0);
+		$where = array("reseller_id" =>$reseller_id);
        }
        $this->db->where($where);   
        if($flag){
-               $result=$this->db_model->select("accountid,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(billseconds) AS acd,MAX(billseconds) AS mcd,SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost,SUM(cost) AS price", "cdrs",'' , "callstart", "DESC",$limit,$start,'pattern,accountid');
+               $result=$this->db_model->select("accountid,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(billseconds) AS acd,MAX(billseconds) AS mcd,SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost,SUM(cost) AS price", "cdrs",'' , "callstart", "DESC",$limit,$start,'pattern,accountid,type');
 //             $result=$this->db->query($query);
        }
        else{

@@ -1,41 +1,30 @@
 <? extend('master.php') ?>
 <? startblock('extra_head') ?>
 
+<!--<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/module_js/generate_grid.js"></script>-->
 <script type="text/javascript" language="javascript">
     $(document).ready(function() {
       
-        build_grid("invoices_grid","",<? echo $grid_fields; ?>,<? echo $grid_buttons; ?>);
-        $('.checkall').click(function () {
-            $('.chkRefNos').attr('checked', this.checked); //if you want to select/deselect checkboxes use this
-        });
-        $("#invoice_search_btn").click(function(){
-            
-            post_request_for_search("invoices_grid","","invoice_search");
+        build_grid("opensipsdevice_grid","",<? echo $grid_fields; ?>,<? echo $fs_grid_buttons; ?>);
+        
+        $("#opensipsdevice_search_btn").click(function(){
+            post_request_for_search("opensipsdevice_grid","","device_search");
         });        
         $("#id_reset").click(function(){
-            clear_search_request("invoices_grid","");
+            clear_search_request("opensipsdevice_grid","");
         });
         
     });
 </script>
-<script>
-       $(document).ready(function() {
-       
-   jQuery("#invoice_date").datetimepicker({format:'Y-m-d'});		
-   jQuery("#date").datetimepicker({format:'Y-m-d'});
-//         		customer_cdr_from_date
-    });
-</script>
 
-<? // echo "<pre>"; print_r($grid_fields); exit;?>
-	
 <? endblock() ?>
 
 <? startblock('page-title') ?>
-    <?= $page_title ?><br/>
+<?= $page_title ?><br/>
 <? endblock() ?>
 
 <? startblock('content') ?>        
+
 <section class="slice color-three">
 	<div class="w-section inverse no-padding">
     	<div class="container">
@@ -54,14 +43,13 @@
         	<div class="row">
                 <div class="col-md-12">      
                         <form method="POST" action="del/0/" enctype="multipart/form-data" id="ListForm">
-                            <table id="invoices_grid" align="left" style="display:none;"></table>
+                            <table id="opensipsdevice_grid" align="left" style="display:none;"></table>
                         </form>
                 </div>  
             </div>
-        </div>
+        </div><br/>
     </div>
 </section>
 
 <? endblock() ?>	
-
 <? end_extend() ?>  

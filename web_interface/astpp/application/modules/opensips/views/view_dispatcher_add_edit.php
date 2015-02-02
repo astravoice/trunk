@@ -1,6 +1,6 @@
 <script type="text/javascript">
     $("#submit").click(function(){
-        submit_form("opensips_form");
+        submit_form("opensips_dispatcher_form");
     })
 </script>
 <section class="slice gray no-margin">

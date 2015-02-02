@@ -31,8 +31,9 @@ class invoices_form{
       $logintype = $this->CI->session->userdata('logintype');
       $url= ($logintype==0 ||$logintype==3 ) ? "/user/user_invoice_download/":'/invoices/invoice_main_download/';
       $grid_field_arr  = json_encode(array(
-          array("Type","148","type","","",""),
-          array("Number","148","id","","",""),
+         // array("Type","148","type","","",""),
+          //array("Number","148","id","","",""),
+          array("Number","148","id","id,'',type","invoices","build_concat_string"),
           array("Account","250","accountid","first_name,last_name,number","accounts","build_concat_string"),
 	  array("From Date","154","from_date","from_date","","get_from_date"),
 	  array("Generated Date","157","invoice_date","invoice_date","","get_invoice_date"),

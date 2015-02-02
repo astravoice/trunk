@@ -2217,15 +2217,16 @@ else
        $url ="accounts/". $entity_type."_edit/$accountid#accounts";
         $this->load->module('opensips/opensips');
         if ($action == "delete") {
-            $this->session->set_flashdata('astpp_notification', 'Opensip removed successfully!');
             $this->opensips->opensips_model->remove_opensips($id);
+            $this->session->set_flashdata('astpp_notification', 'Opensips removed successfully!');
             redirect(base_url() . $url);
         }
         if ($action == "edit") {
-	    $this->session->set_flashdata('astpp_errormsg', 'Opensip updated successfully!');	    
             $this->opensips->customer_opensips_edit($accountid,$id);
+	    $this->session->set_flashdata('astpp_errormsg', 'Opensips updated successfully!');
         }
     }
+
 
     function reseller_edit_account() {
         $account_data = $this->session->userdata("accountinfo");
@@ -2341,7 +2342,7 @@ function customer_animap_list($id='') {
     }
 
    function provider_edit_account(){
-   $this->customer_edit_account();
+      $this->customer_edit_account();
    }
 }
 
