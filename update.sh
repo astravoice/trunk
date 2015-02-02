@@ -27,6 +27,7 @@ TIME=`date +"%Y%m%d-%T"`
 BACKUP_DIR="astpp_$TIME"
 ASTPP_SOURCE_DIR=/usr/src/trunk
 ASTPPEXECDIR=/usr/local/astpp
+CGIDIR=/var/www
 WWWDIR=/var/www
 
 
@@ -34,8 +35,10 @@ WWWDIR=/var/www
 get_linux_distribution () {
         if [ -f /etc/debian_version ]; then
                 DIST="DEBIAN"
+                CGIDIR=/usr/lib
         elif  [ -f /etc/redhat-release ]; then
                 DIST="CENTOS"
+                CGIDIR=/var/www
         else
                 DIST="OTHER"
         fi
@@ -49,7 +52,7 @@ get_linux_distribution
 mkdir /mnt/$BACKUP_DIR
 mv ${WWWDIR}/html/astpp /mnt/$BACKUP_DIR/web
 mv ${ASTPPEXECDIR} /mnt/$BACKUP_DIR/scripts
-mv ${WWWDIR}/cgi-bin /mnt/$BACKUP_DIR/
+mv ${CGIDIR}/cgi-bin /mnt/$BACKUP_DIR/
 
 ###############################################################
 ###### Remove an old source and download new one from git #####
@@ -60,18 +63,22 @@ rm -rf /usr/src/trunk/
 cd /usr/src/
 git clone https://github.com/ASTPP/trunk.git
 
+mkdir -p ${WWWDIR}/html/astpp
+mkdir -p ${ASTPPEXECDIR}
+mkdir -p ${CGIDIR}/cgi-bin
+
 cp -rf $ASTPP_SOURCE_DIR/web_interface/astpp/* ${WWWDIR}/html/astpp
 cp ${ASTPP_SOURCE_DIR}/web_interface/astpp/htaccess ${WWWDIR}/html/astpp/.htaccess
 cp -rf $ASTPP_SOURCE_DIR/scripts/*.pl ${ASTPPEXECDIR}
-cp -rf $ASTPP_SOURCE_DIR/freeswitch/astpp ${WWWDIR}/cgi-bin
+cp -rf $ASTPP_SOURCE_DIR/freeswitch/astpp ${CGIDIR}/cgi-bin
 
-chmod -Rf 777 ${WWWDIR}/cgi-bin/astpp
+chmod -Rf 777 ${CGIDIR}/cgi-bin/astpp
 chmod -Rf 777 ${WWWDIR}/html/astpp
 
 if [ ${DIST} = "DEBIAN" ]; then
-    chown -Rf www-data.www-data ${WWWDIR}/cgi-bin/
+    chown -Rf www-data.www-data ${CGIDIR}/cgi-bin/
 elif [ ${DIST} = "CENTOS" ]; then
-  	chown -Rf apache.apache ${WWWDIR}/cgi-bin/
+  	chown -Rf apache.apache ${CGIDIR}/cgi-bin/
 fi
 ###############################################################
 ################## update ASTPP database ######################
