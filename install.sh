@@ -261,7 +261,7 @@ install_freeswitch_for_astpp () {
     
     # Download latest freeswitch version
     cd /usr/local/src
-    git clone https://stash.freeswitch.org/scm/fs/freeswitch.git
+    git clone https://freeswitch.org/stash/scm/fs/freeswitch.git
     cd freeswitch
     ./bootstrap.sh -j
 
@@ -291,6 +291,12 @@ install_freeswitch_for_astpp () {
 
 #SUB Configure astpp Freeswitch Startup Script
 astpp_freeswitch_startup_script () {
+
+    if [ ! -d ${ASTPP_SOURCE_DIR} ]; then
+        echo "ASTPP source doesn't exists, downloading it from git !"
+	cd /usr/src/
+        git clone https://github.com/ASTPP/trunk.git
+    fi 
     
     if [ ${DIST} = "DEBIAN" ]; then
 	  adduser --disabled-password  --quiet --system --home ${FS_DIR} --gecos "FreeSWITCH Voice Platform" --ingroup daemon freeswitch
@@ -407,7 +413,7 @@ install_astpp () {
 		perl -MCPAN -e 'my $c = "CPAN::HandleConfig"; $c->load(doit => 1, autoconfig => 1); $c->edit(prerequisites_policy => "follow"); $c->edit(build_requires_install_policy => "yes"); $c->commit'
 		#perl -MCPAN -e "install Bundle::CPAN,ExtUtils::CBuilder,DBI,DBD::mysql,YAML,Params::Validate,CGI,URI::Escape,Time::DaysInMonth,DateTime,DateTime::TimeZone,DateTime::Locale,XML::Simple,Data::Dumper,Module::Build,Storable,Time::Zone,Date::Parse,Curses,POE,Sys::Syslog,FCGI,DateTime::Set,DateTime::Event::Recurrence,DateTime::Incomplete,Date::Language,DateTime::Format::Strptime,DBI::Shell,JSON,CGI::Fast, Locale::gettext,Locale::gettext_pp,Text::Template,Mail::Sendmail,XML::Simple";
 
-		perl -MCPAN -e "install CGI,XML::Simple,Data::Dumper,URI::Escape,JSON,POSIX,DBI,Time::HiRes,DateTime::Format::Strptime,XML::Simple";
+		perl -MCPAN -e "install XML::Simple,Data::Dumper,URI::Escape,JSON,POSIX,DBI,Time::HiRes,DateTime::Format::Strptime,XML::Simple,CGI";
 		#cd /usr/src/ASTPP/modules/ASTPP && perl Makefile.PL && make && make install && cd ../../
 	fi
 	
@@ -459,7 +465,7 @@ install_astpp () {
 		     chown -Rf apache.apache ${WWWDIR}/cgi-bin/
                 fi
 		#Copy configuration file
-		cp ${ASTPP_SOURCE_DIR}astpp_confs/sample.astpp-config.conf ${ASTPPDIR}astpp-config.conf
+		cp ${ASTPP_SOURCE_DIR}/astpp_confs/sample.astpp-config.conf ${ASTPPDIR}astpp-config.conf
 
 		#Install GUI of ATSPP
 		mkdir -p ${WWWDIR}/html/astpp
