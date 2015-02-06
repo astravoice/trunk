@@ -49,7 +49,7 @@ print header( -type => 'text/plain' );
 if ( $params->{cdr} or $params->{POSTDATA}) { # PROCESS CDRs.
 	  
       # create object
-      $xml = new XML::Simple;
+      my $xml = new XML::Simple;
 
       my $cdr = ($params->{cdr})?$params->{cdr}:$params->{POSTDATA};
       
