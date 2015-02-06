@@ -44,16 +44,17 @@ foreach my $param ( param() ) {
     $params->{$param} = param($param);
 }
 
-my $xml = header( -type => 'text/plain' );
+print header( -type => 'text/plain' );
 
-if ( $params->{cdr} ) { # PROCESS CDRs.
-      print header( -type => 'text/plain' );
+if ( $params->{cdr} or $params->{POSTDATA}) { # PROCESS CDRs.
 	  
       # create object
       $xml = new XML::Simple;
 
+      my $cdr = ($params->{cdr})?$params->{cdr}:$params->{POSTDATA};
+      
       # read XML file
-      $data = $xml->XMLin($params->{cdr});
+      $data = $xml->XMLin($cdr);
                   
       if ($data->{variables}->{effective_destination_number} && $data->{variables}->{call_processed} eq "internal")
       {      
