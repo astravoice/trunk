@@ -8,7 +8,9 @@
         build_grid("opensipsdevice_grid","",<? echo $grid_fields; ?>,<? echo $grid_buttons; ?>);
         
         $("#opensipsdevice_search_btn").click(function(){
-            post_request_for_search("opensipsdevice_grid","","device_search");
+//alert('fdgdfgdf');
+           post_request_for_search("opensipsdevice_grid","","opensips_list_search");
+//alert('fdgfd');
         });        
         $("#id_reset").click(function(){
             clear_search_request("opensipsdevice_grid","");

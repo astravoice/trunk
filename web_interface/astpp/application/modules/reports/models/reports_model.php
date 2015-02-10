@@ -469,7 +469,7 @@ class Reports_model extends CI_Model {
         return $query;
     }
 
-    function get_resellersummary_report($flag,$start=0,$limit=0){
+    function get_resellersummary_report($flag,$start=0,$limit=0,$export=false){
        
        $this->db_model->build_search('resellersummary_reports_search');
        // $where =$this->resellersummary_report_search();
@@ -482,9 +482,15 @@ class Reports_model extends CI_Model {
        $this->db->where($where);
 
         if($flag){
+if(!$export){
+
             $result=$this->db_model->select("accountid,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(billseconds) AS acd,MAX(billseconds) AS mcd, SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost, SUM(reseller_cost) AS price", "reseller_cdrs",'' , "callstart", "DESC",$limit,$start,'pattern,accountid');          
         }
-        else{
+else
+{
+	$result=$this->db_model->select("accountid,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(billseconds) AS acd,MAX(billseconds) AS mcd, SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost, SUM(reseller_cost) AS price", "reseller_cdrs",'' , "callstart", "DESC",'','','pattern,accountid');  
+}
+    }    else{
             $this->db->order_by('callstart','desc');
 	    $this->db->group_by("pattern","accountid"); 
             $result = $this->db_model->getSelect("count(*) as total_count","reseller_cdrs",$where);
@@ -494,15 +500,22 @@ class Reports_model extends CI_Model {
         
     }
 
-    function get_providersummary_report_list($flag,$start=0,$limit=0){
+    function get_providersummary_report_list($flag,$start=0,$limit=0,$export=false){
         $this->db_model->build_search('providersummary_reports_search');
         $this->db->where("provider_id > ","0");
         if($flag){
+if(!$export){
 	    
 	 $result=$this->db_model->select("provider_id,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(billseconds) AS acd,MAX(billseconds) AS mcd, SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost, SUM(provider_call_cost) AS price", "cdrs",'' , "callstart", "DESC",$limit,$start,'pattern,provider_id');
 
         }
-        else{
+else
+{
+
+ $result=$this->db_model->select("provider_id,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(billseconds) AS acd,MAX(billseconds) AS mcd, SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost, SUM(provider_call_cost) AS price", "cdrs",'' , "callstart", "DESC",'','','pattern,provider_id');
+
+}
+     }   else{
 	    $this->db->order_by('provider_id','desc');
 	    $this->db->group_by("pattern","provider_id"); 
             $result = $this->db_model->getSelect("count(*) as total_count","cdrs",'');
@@ -511,23 +524,29 @@ class Reports_model extends CI_Model {
         return $result;
     }
 
-    function get_customersummary_report_list($flag,$start=0,$limit=0){
+    function get_customersummary_report_list($flag,$start=0,$limit=0,$export=false){
        $this->db_model->build_search('customersummary_reports_search');
-       $reseller_id = $this->session->userdata('logintype') == 1 || $this->session->userdata('logintype') == 5 ? $this->session->userdata['accountinfo']['id'] :0;
-       if($this->session->userdata('advance_search') != 1){
-		$where = array('reseller_id' =>$reseller_id,'callstart >= '=>date('Y-m-d')." 00:00:01",'callstart <='=>date("Y-m-d")." 23:59:59");
+       $reseller_id = $this->session->userdata('logintype') == 1 || $this->session->userdata('logintype') == 5 ? 	$this->session->userdata['accountinfo']['id'] :0;
+	      if($this->session->userdata('advance_search') != 1){
+        	$where = array('reseller_id' =>$reseller_id,'callstart >= '=>date('Y-m-d')." 00:00:01",'callstart <='=>date("Y-m-d")." 23:59:59");
        }
        else{
-		$where = array("reseller_id" =>$reseller_id);
+	$where = array("reseller_id" =>$reseller_id);
        }
-       $this->db->where($where);   
+       $this->db->where($where); 
        if($flag){
+		if(!$export){
+
                $result=$this->db_model->select("accountid,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(billseconds) AS acd,MAX(billseconds) AS mcd,SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost,SUM(cost) AS price", "cdrs",'' , "callstart", "DESC",$limit,$start,'pattern,accountid,type');
-//             $result=$this->db->query($query);
+}
+else{
+
+  $result=$this->db_model->select("accountid,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(billseconds) AS acd,MAX(billseconds) AS mcd,SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost,SUM(cost) AS price", "cdrs",'' , "callstart", "DESC",'','','pattern,accountid,type');
+
+}
+
        }
        else{
-//             $query = "SELECT count(*) as total_count FROM cdrs $where GROUP BY pattern,accountid order by accountid";
-//             $result=$this->db->query($query);
 		$this->db->order_by('accountid','desc');
 		$this->db->group_by("pattern","accountid"); 
 		$result = $this->db_model->getSelect("count(*) as total_count","cdrs",'');

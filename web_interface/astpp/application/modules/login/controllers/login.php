@@ -82,42 +82,30 @@ class Login extends MX_Controller {
         redirect(base_url());
     }
     function paypal_response(){
-//      echo "<pre>"; print_r($_POST); exit;
       if(count($_POST)>0)
       {
         $response_arr=$_POST;
-	$fp=fopen("/var/log/astpp_payment.log","w+");
-	$date = date("Y-m-d H:i:s");
-	fwrite($fp,"====================".$date."===============================\n");
-	foreach($response_arr as $key => $value){	  
-		fwrite($fp,$key.":::>".$value."\n");
-	}
+	    $fp=fopen("/var/log/astpp/astpp_payment.log","w+");
+    	$date = date("Y-m-d H:i:s");
+	    fwrite($fp,"====================".$date."===============================\n");
+	    foreach($response_arr as $key => $value){	  
+		    fwrite($fp,$key.":::>".$value."\n");
+	    }
 
-        if($response_arr["payment_status"] == "Pending" || $response_arr["payment_status"] == "Complete" || $response_arr["payment_status"] == "Completed"){
+    	$payment_check = $this->db_model->countQuery("txn_id", "payments", array("txn_id" => $response_arr['txn_id']));
+	
+        if( ($response_arr["payment_status"] == "Pending" || $response_arr["payment_status"] == "Complete" || $response_arr["payment_status"] == "Completed" ) && $payment_check == 0){
 
             $paypal_tax = $this->db_model->getSelect("value", "system", array("name" => "paypal_tax","group_title"=>"paypal"));
             $paypal_tax = $paypal_tax->result();
             $paypal_tax = $paypal_tax[0]->value;
-            if($paypal_tax != 0 && $paypal_tax != ""){
-                $balance_amt = $response_arr["custom"]; // - (($response_arr["payment_gross"]*$paypal_tax)/100)
-            }else{
-                $balance_amt = $response_arr["custom"];
-            }
-            $actual_amount = $response_arr["custom"];
-            
-            
-            
-            
+            $balance_amt = $actual_amount = $response_arr["custom"];
+                                                
             $paypal_fee = $this->db_model->getSelect("value", "system", array("name" => "paypal_fee","group_title"=>"paypal"));
             $paypal_fee = $paypal_fee->result();
             $paypal_fee = $paypal_fee[0]->value;
 
-            if($paypal_fee == 0){
-                $paypalfee = 0;
-            }else{
-                $paypalfee =$response_arr["mc_gross"];
-//                $balance_amt = $balance_amt - $paypalfee;
-            }            
+            $paypalfee = ($paypal_fee == 0)?'0':$response_arr["mc_gross"];
             
             $account_data = $this->db_model->getSelect("*", "accounts", array("id" => $response_arr["item_number"]));
             $account_data = $account_data->result_array();
@@ -133,9 +121,10 @@ class Login extends MX_Controller {
                 "user_currency"=>$currency["currency"],"currency_rate"=>$currency["currencyrate"],"transaction_details"=>json_encode($response_arr),"date"=>$date);
             $this->db->insert('payment_transaction',$payment_trans_array);
             $paymentid = $this->db->insert_id();
-            
+                                                
             $payment_arr = array("accountid"=> $response_arr["item_number"],"payment_mode"=>"1","credit"=>$balance_amt,
-                    "type"=>"PAYPAL","payment_by"=>"1","notes"=>"Payment Made by Paypal on date:-".$date,"paypalid"=>$paymentid);
+                    "type"=>"PAYPAL","payment_by"=>"1","notes"=>"Payment Made by Paypal on date:-".$date,"paypalid"=>$paymentid,
+                    "txn_id"=>$response_arr["txn_id"],'payment_date'=>gmdate('Y-m-d H:i:s',strtotime($response_arr['payment_date'])));
             $this->db->insert('payments', $payment_arr);
             
             if($account_data["reseller_id"] != "" && $account_data["reseller_id"] != 0){

@@ -268,7 +268,7 @@ class Accounts_model extends CI_Model {
         return $query;
     }
 
-    function get_customer_Account_list($flag, $start = 0, $limit = 0) {
+    function get_customer_Account_list($flag, $start = 0, $limit = 0,$export=false) {
         $this->db_model->build_search('customer_list_search');
         $reseller_flag=false;
         $where = array("deleted" => "0", 'reseller_id' => "0");
@@ -299,6 +299,7 @@ class Accounts_model extends CI_Model {
 	  }
 	}
         if ($flag) {
+            if(!$export)
             $this->db->limit($limit, $start);
             $this->db->order_by('number','desc');
         }
@@ -322,7 +323,7 @@ class Accounts_model extends CI_Model {
         }
     }
 
-    function get_reseller_Account_list($flag, $start = 0, $limit = 0) {
+    function get_reseller_Account_list($flag, $start = 0, $limit = 0,$export=false) {
         $this->db_model->build_search('reseller_list_search');
         $where = array('reseller_id' => "0","deleted" => "0", "type" => "1");
         if ($this->session->userdata('logintype') == 1 || $this->session->userdata('logintype') == 5) {

@@ -1030,6 +1030,8 @@ CREATE TABLE `payments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+ALTER TABLE `payments` ADD `txn_id` VARCHAR( 25 ) NOT NULL AFTER `paypalid` ;
+
 --
 -- Dumping data for table `payments`
 --
@@ -1202,7 +1204,7 @@ CREATE TABLE `reseller_pricing` (
   `prorate` tinyint(10) NOT NULL DEFAULT '0',
   `setup` decimal(10,5) NOT NULL DEFAULT '0.00000',
   `cost` decimal(10,5) NOT NULL DEFAULT '0.00000',
-  `connectcost` decimal(10,0) NOT NULL DEFAULT '0',
+  `connectcost` decimal(10,5) NOT NULL DEFAULT '0.00000',
   `includedseconds` int(4) NOT NULL DEFAULT '0',
   `note` varchar(50) NOT NULL DEFAULT '',
   `disconnectionfee` decimal(10,5) NOT NULL DEFAULT '0.00000',

@@ -28,7 +28,7 @@
             $.ajax({
             type:'POST',
 //     		dataType: 'JSON',
-		url: "<?php echo base_url();?>"+'dashboard/customer_recent_payments/',
+		url: "<?php echo base_url();?>"+'dashboard/customerReport_recent_payments/',
 		cache    : false,
 		async    : false,
                 success: function(response_data) {
@@ -72,7 +72,7 @@
 // 	  var year=d.getFullYear();
             $.ajax({
                 type:'POST',
-                url: "<?php echo base_url();?>dashboard/customer_call_statistics_with_profit/",
+                url: "<?php echo base_url();?>dashboard/customerReport_call_statistics_with_profit/",
                 dataType: 'JSON',
                 cache    : false,
                 async    : false,   
@@ -174,7 +174,7 @@
      function build_call_graph(url){ 
             $.ajax({
                 type:'POST',
-                url: "<?php echo base_url();?>dashboard/customer_maximum_call"+url+"/",
+                url: "<?php echo base_url();?>dashboard/customerReport_maximum_call"+url+"/",
                 dataType: 'JSON',
                 cache    : false,
                 async    : false,   

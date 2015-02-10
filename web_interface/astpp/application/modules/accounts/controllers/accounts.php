@@ -40,6 +40,61 @@ class Accounts extends MX_Controller {
             redirect(base_url() . '/login/login');
     }
 
+function customer_export_cdr_xls() {
+        $query = $this->accounts_model->get_customer_Account_list(true, '', '', true);
+        $customer_array[] = array("Account", "First Name", "Last Name","Company",  "Entity Type", "Rate Group ","Account type",  "Balance", "Credit Limit","Creation", "First Used" ,"Expiry" , "Status");
+        if ($query->num_rows() > 0) {
+
+            foreach ($query->result_array() as $row) {
+                        $customer_array[] = array(
+			$row['number'],
+			$row['first_name'],
+			$row['last_name'],
+			$row['company_name'],
+			$this->common->get_entity_type('','',$row['type']),
+			$this->common->get_field_name('name','pricelists',$row['pricelist_id']),
+			$this->common->get_account_type('','',$row['posttoexternal']),
+			$this->common_model->calculate_currency($row['balance']),
+                        $this->common_model->calculate_currency($row['credit_limit']),
+			$row['creation'],
+			$row['first_used'],
+			$row['expiry'],
+			$this->common->get_status('','',$row['status']),			
+                    );
+                
+            }
+        }
+//echo "<pre>"; print_r($customer_array); exit;
+        $this->load->helper('csv');
+        array_to_csv($customer_array, 'Customer_' . date("Y-m-d") . '.csv');
+    }
+
+function reseller_export_cdr_xls() {
+        $query = $this->accounts_model->get_reseller_Account_list(true, '', '', true);
+        $customer_array[] = array("Account", "First Name", "Last Name","Company","Rate Group ","Account type",  "Balance", "Credit Limit", "Status");
+        if ($query->num_rows() > 0) {
+
+            foreach ($query->result_array() as $row) {
+                        $customer_array[] = array(
+			$row['number'],
+			$row['first_name'],
+			$row['last_name'],
+			$row['company_name'],
+			//$this->common->get_entity_type('','',$row['type']),
+			$this->common->get_field_name('name','pricelists',$row['pricelist_id']),
+			$this->common->get_account_type('','',$row['posttoexternal']),
+			$this->common_model->calculate_currency($row['balance']),
+                        $this->common_model->calculate_currency($row['credit_limit']),
+			$this->common->get_status('','',$row['status']),			
+                    );
+                
+            }
+        }
+        $this->load->helper('csv');
+        array_to_csv($customer_array, 'Reseller_' . date("Y-m-d") . '.csv');
+    }
+
+
     function customer_add($type = 0) {
 	$entity_type =strtolower($this->common->get_entity_type('','',$type));
         $data['username'] = $this->session->userdata('user_name');
@@ -1281,7 +1336,7 @@ class Accounts extends MX_Controller {
     function customer_list_json() {
         $json_data = array();
         $count_all = $this->accounts_model->get_customer_Account_list(false);
-        $paging_data = $this->form->load_grid_config($count_all, $_GET['rp']=10,$_GET['page']=1);
+        $paging_data = $this->form->load_grid_config($count_all, $_GET['rp'],$_GET['page']);
         $json_data = $paging_data["json_paging"];
 
         $query = $this->accounts_model->get_customer_Account_list(true, $paging_data["paging"]["start"], $paging_data["paging"]["page_no"]);

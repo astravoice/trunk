@@ -1043,6 +1043,122 @@ class Reports extends MX_Controller {
       // 	      $s="0".$s;
       // 	  return $h.":".$m.":".$s;
       }
+
+function customersummary_export_cdr_xls() {
+        
+$query = $this->reports_model->get_customersummary_report_list(true, '', '', true);
+        $customer_array[] = array("User", "Code", "Destination","Attempted Calls",  "Completed Calls", "ASR","ACD", "MCD","Bilable", "Debit",  "Cost", "Profit");
+       
+        if ($query->num_rows() > 0) {
+
+             foreach ($query->result_array() as $row1) {
+                $atmpt = $row1['attempts'];
+                $acd = $row1['acd'];
+                $mcd = $row1['mcd'];
+                $bill = $row1['billable'];
+                $price = $row1['price'];
+                $cost = $row1['cost'];
+                $profit = $row1['cost'] - $row1['price'];
+                $cmplt = ($row1['completed'] != 0) ? $row1['completed'] : 0;
+                $asr =  ($cmplt/$atmpt)* 100;
+
+                $customer_array[] = array(
+                    $this->common->build_concat_string("first_name,last_name,number", "accounts",$row1['accountid']),
+                    $this->common->get_only_numeric_val("","",$row1["pattern"]),
+                    $row1["notes"],
+                    $atmpt,
+                    $cmplt,
+                    round($asr, 2),
+                    round($acd/60, 2),
+                    round($mcd/60, 2),                        
+                    round($bill/60, 2),                        
+                    $this->common_model->calculate_currency($cost),
+                    $this->common_model->calculate_currency($row1["price"]),
+                    $this->common_model->calculate_currency($profit));
+                }}
+//echo "<pre>"; print_r($customer_array); exit;
+        $this->load->helper('csv');
+        array_to_csv($customer_array, 'Customer_Summary_' . date("Y-m-d") . '.csv');
+    }
+
+function resellersummary_export_cdr_xls() {
+        
+$query = $this->reports_model->get_resellersummary_report(true, '', '', true);
+        $customer_array[] = array("User", "Code", "Destination","Attempted Calls",  "Completed Calls", "ASR","ACD", "MCD","Bilable", "Debit",  "Cost", "Profit");
+       
+        if ($query->num_rows() > 0) {
+
+             foreach ($query->result_array() as $row1) {
+                $atmpt = $row1['attempts'];
+                $acd = $row1['acd'];
+                $mcd = $row1['mcd'];
+                $bill = $row1['billable'];
+                $price = $row1['price'];
+                $cost = $row1['cost'];
+                $profit = $row1['cost'] - $row1['price'];
+                $cmplt = ($row1['completed'] != 0) ? $row1['completed'] : 0;
+                $asr =  ($cmplt/$atmpt)* 100;
+
+                $customer_array[] = array(
+                    $this->common->build_concat_string("first_name,last_name,number", "accounts",$row1['accountid']),
+                    $this->common->get_only_numeric_val("","",$row1["pattern"]),
+                    $row1["notes"],
+                    $atmpt,
+                    $cmplt,
+                    round($asr, 2),
+                    round($acd/60, 2),
+                    round($mcd/60, 2),                        
+                    round($bill/60, 2),                        
+                    $this->common_model->calculate_currency($row1["price"]),
+                    $this->common_model->calculate_currency($cost),
+                    $this->common_model->calculate_currency($profit));
+                }}
+//echo "<pre>"; print_r($customer_array); exit;
+        $this->load->helper('csv');
+        array_to_csv($customer_array, 'Reseller_Summary_' . date("Y-m-d") . '.csv');
+    }
+
+function providersummary_export_cdr_xls() {
+        
+$query = $this->reports_model->get_providersummary_report_list(true, '', '', true);
+        $customer_array[] = array("Provider", "Code", "Destination","Attempted Calls",  "Completed Calls", "ASR","ACD", "MCD","Bilable" , "Cost");
+       
+        if ($query->num_rows() > 0) {
+
+             foreach ($query->result_array() as $row1) {
+                $atmpt = $row1['attempts'];
+                $acd = $row1['acd'];
+                $mcd = $row1['mcd'];
+                $bill = $row1['billable'];
+                $price = $row1['price'];
+                $cost = $row1['cost'];
+                $cmplt = ($row1['completed'] != 0) ? $row1['completed'] : 0;
+                $asr =  ($cmplt/$atmpt)* 100;
+//                $profit = $row1['cost'] - $row1['price'];
+                $customer_array[] = array(
+                    $this->common->build_concat_string("first_name,last_name,number", "accounts",$row1['provider_id']),
+                    $this->common->get_only_numeric_val("","",$row1["pattern"]),
+                    $row1["notes"],
+                    $atmpt,
+                    $cmplt,
+                    round($asr, 2),
+                    round($acd/60, 2),
+                    round($mcd/60, 2),                        
+                    round($bill/60, 2),                        
+                    $this->common_model->calculate_currency($cost)
+//                    $this->common_model->calculate_currency($profit)
+                    );
+
+                }}
+//echo "<pre>"; print_r($customer_array); exit;
+        $this->load->helper('csv');
+        array_to_csv($customer_array, 'Provider_Summary_' . date("Y-m-d") . '.csv');
+    }
+
+
+
+
+
 }
 
 ?>

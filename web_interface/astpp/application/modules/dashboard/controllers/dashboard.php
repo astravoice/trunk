@@ -47,9 +47,9 @@ class dashboard extends CI_Controller {
         }
     }
     function user_recent_payments(){
-      $this->customer_recent_payments();
+      $this->customerReport_recent_payments();
     }     
-    function customer_recent_payments() 
+    function customerReport_recent_payments() 
     {
 	 
         $json_data = array();
@@ -75,9 +75,9 @@ class dashboard extends CI_Controller {
          echo json_encode($json_data); 
     }
     function  user_call_statistics_with_profit(){
-      $this->customer_call_statistics_with_profit();
+      $this->customerReport_call_statistics_with_profit();
      }
-    function customer_call_statistics_with_profit() {
+    function customerReport_call_statistics_with_profit() {
 	$json_data = array();
 	$start_date=date('Y-m-01');
 	$gmtoffset=$this->common->get_timezone_offset();
@@ -128,9 +128,9 @@ class dashboard extends CI_Controller {
 }
 
      function user_maximum_callminutes(){
-      $this->customer_maximum_callminutes();
+      $this->customerReport_maximum_callminutes();
     }
-     function customer_maximum_callminutes()
+     function customerReport_maximum_callminutes()
      {
      	$json_data = array();
  	$result = $this->dashboard_model->get_customer_maximum_callminutes();
@@ -173,9 +173,9 @@ class dashboard extends CI_Controller {
      }
 
      function user_maximum_callcount(){
-       $this->customer_maximum_callcount();
+       $this->customerReport_maximum_callcount();
      }
-     function customer_maximum_callcount()
+     function customerReport_maximum_callcount()
      {
      	$json_data = array();
 	$result = $this->dashboard_model->get_customer_maximum_callcount();

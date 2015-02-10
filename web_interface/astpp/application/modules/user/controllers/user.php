@@ -96,8 +96,8 @@ class User extends MX_Controller {
   }
   function user_subscription_data(){
       $accountinfo=$this->session->userdata('accountinfo');
-//       echo "<pre>";
-//       print_r($accountinfo);
+/*       echo "<pre>";
+       print_r($accountinfo);exit;*/
        $this->db->where('accountid',$accountinfo['id']);
        $this->db->select('*');
        $this->db->order_by('assign_date','desc');
@@ -127,7 +127,12 @@ class User extends MX_Controller {
 	foreach($result as $key=>$data){
 	    $data['charge_id'] =isset($charges_arr[$data['charge_id']]) ? $charges_arr[$data['charge_id']] :"Anonymous";
 	    $json_data[$i]['charge_id']=$data['charge_id'];
-	    $json_data[$i]['assign_date']=date('Y-m-d H:i:s',strtotime($data['assign_date'])+$gmtoffset);
+	    if($data['assign_date'] != '0000-00-00 00:00:00'){
+	        $json_data[$i]['assign_date']=date('Y-m-d H:i:s',strtotime($data['assign_date'])+$gmtoffset);
+	    }else{
+                $json_data[$i]['assign_date']=$data['assign_date'];
+	    }
+	    
 	    $i++;
 	}
 // 	echo "<pre>";
@@ -551,7 +556,7 @@ redirect(base_url() . "user/user_animap_list/");
         $json_data = array();
         $this->load->module('opensips/opensips');
         $count_all = $this->opensips_model->getopensipsdevice_customer_list(false, $accountinfo['id']);
-        $paging_data = $this->form->load_grid_config($count_all, $_GET['rp'], $_GET['page']);
+        $paging_data = $this->form->load_grid_config($count_all, $_GET['rp']=10, $_GET['page']=1);
         $json_data = $paging_data["json_paging"];
 
         $query = $this->opensips_model->getopensipsdevice_customer_list(true, $accountinfo['id'], $paging_data["paging"]["start"], $paging_data["paging"]["page_no"]);
@@ -566,12 +571,16 @@ redirect(base_url() . "user/user_animap_list/");
     }
 
     function user_opensips_search() {
-        $ajax_search = $this->input->post('ajax_search', 0);
+       $ajax_search = $this->input->post('ajax_search', 0);
+ 
         if ($this->input->post('advance_search', TRUE) == 1) {
             $this->session->set_userdata('advance_search', $this->input->post('advance_search'));
             $action = $this->input->post();
+
             unset($action['action']);
             unset($action['advance_search']);
+//echo '<pre>'; print_r($action);
+//exit;
             $this->session->set_userdata('opensipsdevice_list_search', $action);
         }
         if (@$ajax_search != 1) {

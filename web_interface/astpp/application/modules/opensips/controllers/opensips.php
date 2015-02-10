@@ -53,7 +53,7 @@ class Opensips extends MX_Controller {
             $edit_data = $value;
         }
 
-        $data['form'] = $this->form->build_form($this->opensips_form->get_opensips_form_fields(), $edit_data);
+        $data['form'] = $this->form->build_form($this->opensips_form->get_opensips_form_fields($edit_id), $edit_data);
         $this->load->view('view_opensips_add_edit', $data);
     }
 
@@ -79,7 +79,7 @@ class Opensips extends MX_Controller {
     function opensips_save() {
         $add_array = $this->input->post();
 
-        $data['form'] = $this->form->build_form($this->opensips_form->get_opensips_form_fields(), $add_array);
+        $data['form'] = $this->form->build_form($this->opensips_form->get_opensips_form_fields($add_array['id']), $add_array);
         if ($add_array['id'] != '') {
             $data['page_title'] = 'Edit Opensisp';
             if ($this->form_validation->run() == FALSE) {
@@ -206,7 +206,7 @@ function user_opensips_save($user_flg = false) {
     function opensips_list_json() {
         $json_data = array();
         $count_all = $this->opensips_model->getopensipsdevice_list(false);
-        $paging_data = $this->form->load_grid_config($count_all, $_GET['rp'], $_GET['page']);
+        $paging_data = $this->form->load_grid_config($count_all, $_GET['rp']=10, $_GET['page']=1);
         $json_data = $paging_data["json_paging"];
 
         $query = $this->opensips_model->getopensipsdevice_list(true, $paging_data["paging"]["start"], $paging_data["paging"]["page_no"]);
@@ -216,22 +216,24 @@ function user_opensips_save($user_flg = false) {
         echo json_encode($json_data);
     }
 
-    function opensips_list_search() {
+     function opensips_list_search() {
+//alert('hgjgh');
         $ajax_search = $this->input->post('ajax_search', 0);
+//alert();
         if ($this->input->post('advance_search', TRUE) == 1) {
             $this->session->set_userdata('advance_search', $this->input->post('advance_search'));
-            unset($_POST['action']);
-            unset($_POST['advance_search']);
-            $this->session->set_userdata('opensipsdevice_list_search', $this->input->post());
+            $action = $this->input->post();
+            unset($action['action']);
+            unset($action['advance_search']);
+            $this->session->set_userdata('opensipsdevice_list_search', $action);
         }
         if (@$ajax_search != 1) {
             redirect(base_url() . 'opensips/opensips_list/');
         }
     }
-
     function opensips_list_clearsearchfilter() {
-        $this->session->set_userdata('advance_search', 0);
-        $this->session->set_userdata('account_search', "");
+            $this->session->set_userdata('advance_search','');
+            $this->session->set_userdata('opensipsdevice_list_search','');
     }
 
 //    dispather List add edit delete

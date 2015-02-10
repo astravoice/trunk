@@ -31,9 +31,7 @@ class Dashboard_model extends CI_Model {
 	$accountinfo=$this->session->userdata('accountinfo');
 	$userlevel_logintype=$this->session->userdata('userlevel_logintype');
 	
-	if($userlevel_logintype ==-1){
-	  $where_arr=array('payment_by'=>-1);
-	}
+	$where_arr=array('payment_by'=>-1);
 	if($userlevel_logintype == 1){
 	  $where_arr=array('payment_by'=>$accountinfo['id']);
 	}
@@ -52,7 +50,8 @@ class Dashboard_model extends CI_Model {
 	$start_date=date('Y-m-01');
 	$end_date=date('Y-m-t');
 	$accountinfo=$this->session->userdata('accountinfo');
-    	$parent_id= ($accountinfo['type'] == -1) ? 0  :$accountinfo['id'];
+    	$parent_id= ($accountinfo['type'] == 1) ? $accountinfo['id']:0;
+    
     	$table=$accountinfo['type']==1? 'reseller_cdrs':'cdrs';
     	$profit_field_name=$table=='reseller_cdrs'?'reseller_cost' :'provider_call_cost';
     	$field_name=$table=='reseller_cdrs'?'accountid' :'reseller_id';

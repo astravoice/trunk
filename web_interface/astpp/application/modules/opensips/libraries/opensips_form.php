@@ -4,13 +4,14 @@ class Opensips_form{
         $this->CI = & get_instance();
     }
     
-    function get_opensips_form_fields() {
-            $accountinfo = $this->CI->session->userdata("accountinfo");
+    function get_opensips_form_fields($id=false) {
+        $accountinfo = $this->CI->session->userdata("accountinfo");
+        $val = $id > 0 ? 'subscriber.username.' . $id : 'subscriber.username';
             $loginid=$this->CI->session->userdata('logintype')==2 ? 0:$accountinfo['id'];
         $form['forms'] = array(base_url() . 'opensips/opensips_save/',array("id"=>"opensips_form","name"=>"opensips_form"));
         $form['Opensips Device'] = array(
             array('', 'HIDDEN', array('name'=>'id'),'', '', '', ''), 
-            array('Username', 'INPUT', array('name' => 'username','size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|required', 'tOOL TIP', ''),
+            array('Username', 'INPUT', array('name' => 'username','size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|required|is_unique['.$val.']', 'tOOL TIP', ''),
             array('password', 'PASSWORD', array('name' => 'password','size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|required', 'tOOL TIP', ''),
              array('Account', 'accountcode', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'number', 'number', 'accounts', 'build_dropdown', 'where_arr', array("reseller_id" => $loginid,"type"=>"GLOBAL", "deleted" => "0")),
             array('Rate Group', 'pricelist_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'name', 'pricelists', 'build_dropdown', 'where_arr',array("reseller_id" => $loginid,'status'=>0)),
@@ -60,7 +61,7 @@ function get_search_dispatcher_form()
 
      function get_search_opensips_form()
     {
-        $form['forms'] = array("",array('id'=>"device_search"));
+        $form['forms'] = array("",array('id'=>"opensips_list_search"));
         $form['Search'] = array(    
              array('Username', 'INPUT', array('name' => 'username[username]','','size' => '20', 'class' => "text field "), '', 'tOOL TIP', '1', 'username[username-string]', '', '','', 'search_string_type', ''),
             array('', 'HIDDEN', 'ajax_search','1', '', '', ''),    
@@ -114,14 +115,14 @@ function get_search_dispatcher_form()
 	return $buttons_json;
     }
       function get_opensips_form_fields_for_customer($accountid , $id=false){
-	 $val = $id > 0 ? 'opensips.username.' . $id : 'opensips.username';
+	 $val = $id > 0 ? 'subscriber.username.' . $id : 'subscriber.username';
 	 if ($this->CI->session->userdata("logintype") == '0'  || $this->CI->session->userdata("logintype") == '3') {    
          $link = base_url().'opensips/user_opensips_save/true';       
          $form['forms'] = array($link,array("id"=>"opensips_form","name"=>"opensips_form"));
          $form['Opensips Device'] = array(
             array('', 'HIDDEN', array('name'=>'id'),'', '', '', ''), 
             array('', 'HIDDEN', array('name' => 'accountcode','value'=>$this->CI->common->get_field_name('number','accounts',array('id'=>$accountid))), '', '', '', ''),
-            array('Username', 'INPUT', array('name' => 'username','size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|required|min_length[2]|max_length[25]|is_unique['.$val.']|xss_clean', 'tOOL TIP', 'Please Enter account number'),
+            array('Username', 'INPUT', array('name' => 'username','size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|required|is_unique['.$val.']', 'tOOL TIP', 'Please Enter account number'),
             array('password', 'PASSWORD', array('name' => 'password','size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|required', 'tOOL TIP', 'Please Enter account number'),
             array('Rate Group', 'pricelist_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'name', 'pricelists', 'build_dropdown', 'where_arr',array("reseller_id" => $val,'status'=>0)),
             array('Domain', 'INPUT', array('name' => 'domain','size' => '20', 'maxlength' => '15', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter account number')   
@@ -133,7 +134,7 @@ function get_search_dispatcher_form()
             $form['Opensips Device'] = array(
             array('', 'HIDDEN', array('name'=>'id'),'', '', '', ''), 
             array('', 'HIDDEN', array('name' => 'accountcode','value'=>$this->CI->common->get_field_name('number','accounts',array('id'=>$accountid))), '', '', '', ''),
-            array('Username', 'INPUT', array('name' => 'username','size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|required|min_length[2]|max_length[25]|is_unique['.$val.']|xss_clean', 'tOOL TIP', 'Please Enter account number'),
+            array('Username', 'INPUT', array('name' => 'username','size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|required|is_unique['.$val.']', 'tOOL TIP', 'Please Enter account number'),
             array('password', 'PASSWORD', array('name' => 'password','size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|required', 'tOOL TIP', 'Please Enter account number'),
             array('Rate Group', 'pricelist_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'name', 'pricelists', 'build_dropdown', 'reseller_id', '0'),
             

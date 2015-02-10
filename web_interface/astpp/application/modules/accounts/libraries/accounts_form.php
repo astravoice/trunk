@@ -652,8 +652,9 @@ array('', 'HIDDEN', 'ajax_search', '1', '', '', ''),
 	  $provider = array("Create Provider","btn btn-line-blue btn","fa fa-plus-circle fa-lg", "button_action", "/accounts/provider_add/");
         $buttons_json = json_encode(array(
 	    array("Create Customer","btn btn-line-warning btn","fa fa-plus-circle fa-lg", "button_action", "/accounts/customer_add/"),
-	    array("Mass Create","btn btn-line-warning btn","fa fa-plus-circle fa-lg", "button_action", "/accounts/customer_bulk_creation/","popup"),
+            array("Mass Create","btn btn-line-warning btn","fa fa-plus-circle fa-lg", "button_action", "/accounts/customer_bulk_creation/","popup"),
 	    $provider,
+	     array("Export","btn btn-xing" ," fa fa-download fa-lg", "button_action", "/accounts/customer_export_cdr_xls", 'single'),
             array("Delete","btn btn-line-danger","fa fa-times-circle fa-lg","button_action", "/accounts/customer_selected_delete/")
            ));
         return $buttons_json;
@@ -688,6 +689,7 @@ array('', 'HIDDEN', 'ajax_search', '1', '', '', ''),
     function build_grid_buttons_reseller() {
         $buttons_json = json_encode(array(
 	    array("Create","btn btn-line-warning btn","fa fa-plus-circle fa-lg", "button_action", "/accounts/reseller_add/"),
+	    array("Export","btn btn-xing" ," fa fa-download fa-lg", "button_action", "/accounts/reseller_export_cdr_xls", 'single'),
             array("Delete","btn btn-line-danger","fa fa-times-circle fa-lg", "button_action", "/accounts/reseller_selected_delete/")
            ));
         return $buttons_json;

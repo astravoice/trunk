@@ -319,7 +319,7 @@ class Reports_form {
         return $grid_field_arr;
     }
     function build_grid_buttons_providersummary() {
-        $buttons_json = json_encode(array());
+       $buttons_json = json_encode(array(array("Export","btn btn-xing" ," fa fa-download fa-lg", "button_action", "/reports/providersummary_export_cdr_xls", 'single')));
         return $buttons_json;
     }
     function get_resellersummary_search_form() {
@@ -359,7 +359,7 @@ array('', 'HIDDEN', 'ajax_search', '1', '', '', ''),array('', 'HIDDEN', 'advance
         return $grid_field_arr;
     }
     function build_grid_buttons_resellersummary() {
-        $buttons_json = json_encode(array());
+         $buttons_json = json_encode(array(array("Export","btn btn-xing" ," fa fa-download fa-lg", "button_action", "/reports/resellersummary_export_cdr_xls", 'single')));
         return $buttons_json;
     }
     function get_customersummary_search_form() {
@@ -397,7 +397,7 @@ array('', 'HIDDEN', 'ajax_search', '1', '', '', ''),array('', 'HIDDEN', 'advance
         return $grid_field_arr;
     }
     function build_grid_buttons_customersummary() {
-        $buttons_json = json_encode(array());
+        $buttons_json = json_encode(array(array("Export","btn btn-xing" ," fa fa-download fa-lg", "button_action", "/reports/customersummary_export_cdr_xls", 'single')));
         return $buttons_json;
     }
 
