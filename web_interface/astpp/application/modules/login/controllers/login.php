@@ -127,7 +127,7 @@ class Login extends MX_Controller {
                     "txn_id"=>$response_arr["txn_id"],'payment_date'=>gmdate('Y-m-d H:i:s',strtotime($response_arr['payment_date'])));
             $this->db->insert('payments', $payment_arr);
             
-            if($account_data["reseller_id"] != "" && $account_data["reseller_id"] != 0){
+            /*if($account_data["reseller_id"] != "" && $account_data["reseller_id"] != 0){
                 $comm_rate = $this->common->get_field_name('commission_rate', 'accounts', $account_data["reseller_id"]);
                 if($comm_rate != "" && $comm_rate != 0){
                     $comm_amt = ($balance_amt*$comm_rate)/100;
@@ -137,7 +137,8 @@ class Login extends MX_Controller {
                     $this->db->insert('commission',$commission_arr);
                     $this->db_model->update_balance($balance_amt,$account_data["reseller_id"],"credit");            
                 }
-            }
+            }*/
+            
             $this->db_model->update_balance($balance_amt,$response_arr["item_number"],"credit");            
             redirect(base_url() . 'user/user/');
         }

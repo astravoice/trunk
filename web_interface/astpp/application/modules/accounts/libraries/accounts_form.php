@@ -61,7 +61,7 @@ class Accounts_form {
         $form['Account Settings'] = array(
             array('Status', 'status', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_status'),
             array('Max Channels', 'INPUT', array('name' => 'maxchannels', 'size' => '20', 'maxlength' => '4', 'class' => "text field medium"), 'numeric', 'tOOL TIP', ''),
-            array('Number Translation', 'INPUT', array('name' => 'dialed_modify', 'size' => '20', 'maxlength' => '200', 'class' => "text field medium"), 'numeric', 'tOOL TIP', ''),
+            array('Number Translation', 'INPUT', array('name' => 'dialed_modify', 'size' => '20', 'maxlength' => '200', 'class' => "text field medium"), '', 'tOOL TIP', ''),
              array('First Used', 'INPUT', array('name' => 'first_used', 'size' => '20', 'readonly' => true, 'maxlength' => '200', 'class' => "text field medium",'value'=>'0000-00-00 00:00:00'), '', 'tOOL TIP', ''),
             array('Expiry Date', 'INPUT', array('name' => 'expiry', 'size' => '20', 'maxlength' => '200', 'class' => "text field medium",'value'=>$expiry_date,'id'=>'expiry'), '', 'tOOL TIP', ''),
             array('Valid Days', 'INPUT', array('name' => 'validfordays', 'size' => '20', 'maxlength' => '7', 'class' => "text field medium"), 'trim|numeric|min_length[1]|max_length[4]|xss_clean', 'tOOL TIP', ''),  
