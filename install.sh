@@ -39,7 +39,8 @@ FS_DIR=/usr/local/freeswitch
 FS_SOUNDSDIR=${FS_DIR}/sounds/en/us/callie
 FS_SCRIPTS=${FS_DIR}/scripts
 
-WWWDIR=/var/www
+CGIDIR=/var/www
+WWWDIR=/var/www/html
 
 ASTPP_USING_FREESWITCH="no"
 ASTPP_USING_ASTERISK="no"
@@ -224,11 +225,12 @@ install_freeswitch_for_astpp () {
 	apt-get update
 
 	# Install Freeswitch pre-requisite packages using APTITUDE
-	apt-get install -y autoconf automake devscripts gawk g++ git-core libjpeg62-dev libncurses5-dev libtool make python-dev gawk pkg-config libperl-dev libgdbm-dev libdb-dev gettext sudo lua5.1  apache2 apache2-threaded-dev php5 php5-dev php5-common php5-cli php5-gd php-pear  php5-cli php-apc php5-curl libapache2-mod-php5 perl libapache2-mod-perl2 libxml2 libxml2-dev openssl libcurl4-openssl-dev gettext libtool gcc g++ libldns-dev libpcre3-dev build-essential
-	apt-get install -y libssl-dev libspeex-dev libspeexdsp-dev libsqlite3-dev libedit-dev libldns-dev libpq-dev
+	apt-get install -y autoconf automake devscripts gawk g++ git-core libjpeg62-dev libncurses5-dev libtool make python-dev pkg-config libperl-dev libgdbm-dev libdb-dev gettext sudo lua5.1 apache2 apache2-threaded-dev php5 php5-dev php5-common php5-cli php5-gd php-pear php5-cli php-apc php5-curl libapache2-mod-php5 perl libapache2-mod-perl2 libxml2 libxml2-dev openssl libcurl4-openssl-dev gettext gcc libldns-dev libpcre3-dev build-essential libssl-dev libspeex-dev libspeexdsp-dev libsqlite3-dev libedit-dev libldns-dev libpq-dev
+	
 	echo mysql-server mysql-server/root_password password ${MYSQL_ROOT_PASSWORD} | debconf-set-selections
 	echo mysql-server mysql-server/root_password_again password ${MYSQL_ROOT_PASSWORD} | debconf-set-selections
-        apt-get install -y mysql-server php5-mysql chkconfig ntpdate ntp
+	
+    apt-get install -y mysql-server php5-mysql chkconfig ntpdate ntp
 	
     elif  [ ${DIST} = "CENTOS" ]; then
 	#install_epel
@@ -238,10 +240,8 @@ install_freeswitch_for_astpp () {
 	yum clean all
 
 	# Install Freeswitch pre-requisite packages using YUM
-	yum  install -y autoconf automake  expat-devel gnutls-devel libtiff-devel libX11-devel unixODBC-devel python-devel zlib-devel alsa-lib-devel libogg-devel libvorbis-devel perl perl-libs uuid-devel @development-tools gdbm-devel db4-devel libjpeg libjpeg-devel compat-libtermcap ncurses ncurses-devel ntp screen sendmail sendmail-cf gcc-c++ libtool cpan @development-tools
-	# i think i need to install also next packages
-	yum install -y bison bzip2 curl curl-devel dmidecode git make mysql-connector-odbc openssl-devel unixODBC zlib
-	yum install -y pcre-devel speex-devel sqlite-devel ldns-devel libedit-devel
+	yum  install -y autoconf automake  expat-devel gnutls-devel libtiff-devel libX11-devel unixODBC-devel python-devel zlib-devel alsa-lib-devel libogg-devel libvorbis-devel perl perl-libs uuid-devel @development-tools gdbm-devel db4-devel libjpeg libjpeg-devel compat-libtermcap ncurses ncurses-devel ntp screen sendmail sendmail-cf gcc-c++ libtool cpan @development-tools bison bzip2 curl curl-devel dmidecode git make mysql-connector-odbc openssl-devel unixODBC zlib pcre-devel speex-devel sqlite-devel ldns-devel libedit-devel
+
     fi  
     
     echo "Lets first make sure that time is correct before we continue ... "
@@ -271,7 +271,7 @@ install_freeswitch_for_astpp () {
     echo "Enable mod_xml_curl, mod_xml_cdr, mod_perl"
 
     sed -i "s#\#xml_int/mod_xml_curl#xml_int/mod_xml_curl#g" /usr/local/src/freeswitch/modules.conf
-    #sed -i "s#\#languages/mod_perl#languages/mod_perl#g" /usr/local/src/freeswitch/modules.conf
+    sed -i "s#\#languages/mod_perl#languages/mod_perl#g" /usr/local/src/freeswitch/modules.conf
     sed -i "s#\#mod_xml_cdr#mod_xml_cdr#g" /usr/local/src/freeswitch/modules.conf
 
     read -n 1 -p "Press any key to continue ... "
@@ -324,7 +324,6 @@ startup_services() {
 		
 	/etc/init.d/mysql restart
 	/usr/sbin/a2ensite astpp
-	/etc/init.d/apache2 reload
 	/etc/init.d/apache2 restart
 	/etc/init.d/freeswitch restart
 	
@@ -372,8 +371,6 @@ mysql -uroot -p${MYSQL_ROOT_PASSWORD} -e "CREATE USER 'astppuser'@'localhost' ID
 mysql -uroot -p${MYSQL_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON \`${ASTPP_DATABASE_NAME}\` . * TO 'astppuser'@'localhost' WITH GRANT OPTION;FLUSH PRIVILEGES;"
 
 mysql -uroot -p${MYSQL_ROOT_PASSWORD} astpp < ${ASTPP_SOURCE_DIR}/sql/astpp-2.0.sql
-#mysql -uroot -p${MYSQL_ROOT_PASSWORD} astpp < ${ASTPP_SOURCE_DIR}/sql/astpp-upgrade-1.7.3.sql
-
 }
 
 
@@ -383,13 +380,15 @@ install_astpp () {
 	cd /usr/src/
 	git clone https://github.com/ASTPP/trunk.git
 	if [ ${DIST} = "DEBIAN" ]; then
-	      # Install ASTPP pre-requisite packages using APTITUDE
+	      # Install ASTPP pre-requisite packages using apt-get
 	      apt-get install -y apache2 apache2-threaded-dev php5 php5-dev php5-common php5-cli php5-gd php-pear php5-cli php-apc php5-curl libapache2-mod-php5 perl libapache2-mod-perl2 libxml2 libxml2-dev openssl libcurl4-openssl-dev gettext libtool gcc g++
+	      
 	      echo "MySQL root password is set to : ${MYSQL_ROOT_PASSWORD}" 
 	      echo "astppuser password is set to : ${ASTPPUSER_MYSQL_PASSWORD}"
 	      echo mysql-server mysql-server/root_password password ${MYSQL_ROOT_PASSWORD} | debconf-set-selections
 	      echo mysql-server mysql-server/root_password_again password ${MYSQL_ROOT_PASSWORD} | debconf-set-selections
-              apt-get install -y mysql-server php5-mysql
+	      
+          apt-get install -y mysql-server php5-mysql
 
 
 	elif  [ ${DIST} = "CENTOS" ]; then
@@ -411,10 +410,8 @@ install_astpp () {
 	
 	if [ ${INSTALL_ASTPP_PERL_PACKAGES} = "yes" ]; then
 		perl -MCPAN -e 'my $c = "CPAN::HandleConfig"; $c->load(doit => 1, autoconfig => 1); $c->edit(prerequisites_policy => "follow"); $c->edit(build_requires_install_policy => "yes"); $c->commit'
-		#perl -MCPAN -e "install Bundle::CPAN,ExtUtils::CBuilder,DBI,DBD::mysql,YAML,Params::Validate,CGI,URI::Escape,Time::DaysInMonth,DateTime,DateTime::TimeZone,DateTime::Locale,XML::Simple,Data::Dumper,Module::Build,Storable,Time::Zone,Date::Parse,Curses,POE,Sys::Syslog,FCGI,DateTime::Set,DateTime::Event::Recurrence,DateTime::Incomplete,Date::Language,DateTime::Format::Strptime,DBI::Shell,JSON,CGI::Fast, Locale::gettext,Locale::gettext_pp,Text::Template,Mail::Sendmail,XML::Simple";
 
 		perl -MCPAN -e "install XML::Simple,Data::Dumper,URI::Escape,JSON,POSIX,DBI,Time::HiRes,DateTime::Format::Strptime,XML::Simple,CGI";
-		#cd /usr/src/ASTPP/modules/ASTPP && perl Makefile.PL && make && make install && cd ../../
 	fi
 	
 	if [ ${ASTPP_USING_FREESWITCH} = "yes" ]; then
@@ -428,21 +425,21 @@ install_astpp () {
 		    chown -Rf www-data.www-data ${ASTPPDIR}
 		    chown -Rf www-data.www-data ${ASTPPLOGDIR}
 		    chown -Rf www-data.www-data ${ASTPPEXECDIR}
-		    WWWDIR=/usr/lib
-		    chown -Rf www-data.www-data ${WWWDIR}/cgi-bin/
+		    CGIDIR=/usr/lib
+		    chown -Rf www-data.www-data ${CGIDIR}/cgi-bin/
 		elif [ ${DIST} = "CENTOS" ]; then
 		    chown -Rf apache.apache ${ASTPPDIR}
 		    chown -Rf apache.apache ${ASTPPLOGDIR}
 		    chown -Rf apache.apache ${ASTPPEXECDIR}
-		    WWWDIR=/var/www
-		    chown -Rf apache.apache ${WWWDIR}/cgi-bin/
+		    CGIDIR=/var/www
+		    chown -Rf apache.apache ${CGIDIR}/cgi-bin/
 		fi
 		
 		cp -rf ${ASTPP_SOURCE_DIR}/scripts/*.pl ${ASTPPEXECDIR}/
 		
 		#Copy cgi scripts to cgi-bin
-		cp -rf ${ASTPP_SOURCE_DIR}/freeswitch/astpp ${WWWDIR}/cgi-bin/
-	        chmod -Rf 777 ${WWWDIR}/cgi-bin/astpp
+		cp -rf ${ASTPP_SOURCE_DIR}/freeswitch/astpp ${CGIDIR}/cgi-bin/
+	        chmod -Rf 777 ${CGIDIR}/cgi-bin/astpp
 		
 		#copy calling card script to freeswitch script folder
 		cp ${ASTPP_SOURCE_DIR}/freeswitch/astpp-callingcards.pl ${FS_SCRIPTS}/astpp-callingcards.pl
@@ -454,38 +451,30 @@ install_astpp () {
 	if [ ${INSTALL_ASTPP_WEB_INTERFACE} = "yes" ]; then
 		
 		echo "installing ASTPP web interface"
-		mkdir -p ${ASTPPDIR}
-		 if [ ${DIST} = "DEBIAN" ]; then
-                    chown -Rf www-data.www-data ${ASTPPDIR}
-		    WWWDIR=/usr/lib
-		    chown -Rf www-data.www-data ${WWWDIR}/cgi-bin/
-                elif [ ${DIST} = "CENTOS" ]; then
-                    chown -Rf apache.apache ${ASTPPDIR}
-		    WWWDIR=/var/www
-		     chown -Rf apache.apache ${WWWDIR}/cgi-bin/
-                fi
+		
+		mkdir -p ${ASTPPDIR}		
 		#Copy configuration file
 		cp ${ASTPP_SOURCE_DIR}/astpp_confs/sample.astpp-config.conf ${ASTPPDIR}astpp-config.conf
 
 		#Install GUI of ATSPP
-		mkdir -p ${WWWDIR}/html/astpp
+		mkdir -p ${WWWDIR}/astpp
 		
-		echo "Directory created ${WWWDIR}/html/astpp"
+		echo "Directory created ${WWWDIR}/astpp"
 		
-		cp -rf ${ASTPP_SOURCE_DIR}/web_interface/astpp/* ${WWWDIR}/html/astpp/
-		cp ${ASTPP_SOURCE_DIR}/web_interface/astpp/htaccess ${WWWDIR}/html/astpp/.htaccess
+		cp -rf ${ASTPP_SOURCE_DIR}/web_interface/astpp/* ${WWWDIR}/astpp/
+		cp ${ASTPP_SOURCE_DIR}/web_interface/astpp/htaccess ${WWWDIR}/astpp/.htaccess
 		
 		if [ ${DIST} = "DEBIAN" ]; then
-			chown -Rf www-data.www-data ${WWWDIR}/html/astpp
+			chown -Rf www-data.www-data ${WWWDIR}/astpp
 			cp ${ASTPP_SOURCE_DIR}/web_interface/apache/astpp.conf /etc/apache2/sites-available/astpp.conf
 			a2ensite astpp
 			a2ensite astpp.conf
 			/etc/init.d/apache2 restart
 		elif  [ ${DIST} = "CENTOS" ]; then
-			chown -Rf apache.apache ${WWWDIR}/html/astpp
+			chown -Rf apache.apache ${WWWDIR}/astpp
 			cp ${ASTPP_SOURCE_DIR}/web_interface/apache/astpp.conf /etc/httpd/conf.d/astpp.conf
 		fi
-		chmod -Rf 777 ${WWWDIR}/html/astpp
+		chmod -Rf 777 ${WWWDIR}/astpp
 	fi	
 }
 
@@ -511,10 +500,8 @@ finalize_astpp_installation () {
     # TODO IF NEEDED
 
     # Enable mod_xml_curl, mod_xml_cdr, mod_cdr_csv, mod_perl in /usr/local/freeswitch/conf/autoload_configs/modules.conf.xml
-    # <!-- <load module="mod_xml_curl"/> -->
-    # <!-- <load module="mod_xml_cdr"/> -->
-    sed -i "s#<!-- <load module=\"mod_xml_curl\"/> -->#<load module=\"mod_xml_curl\"/>#g" ${FS_DIR}/conf/autoload_configs/modules.conf.xml
-    sed -i "s#<!-- <load module=\"mod_xml_cdr\"/> -->#<load module=\"mod_xml_cdr\"/>#g" ${FS_DIR}/conf/autoload_configs/modules.conf.xml
+    #sed -i "s#<!-- <load module=\"mod_xml_curl\"/> -->#<load module=\"mod_xml_curl\"/>#g" ${FS_DIR}/conf/autoload_configs/modules.conf.xml
+    #sed -i "s#<!-- <load module=\"mod_xml_cdr\"/> -->#<load module=\"mod_xml_cdr\"/>#g" ${FS_DIR}/conf/autoload_configs/modules.conf.xml
     #sed -i "s#<!-- <load module=\"mod_perl\"/> -->#<load module=\"mod_perl\"/>#g" ${FS_DIR}/conf/autoload_configs/modules.conf.xml
 
 
