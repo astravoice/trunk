@@ -66,7 +66,7 @@ if ( $params->{cdr} or $params->{POSTDATA}) { # PROCESS CDRs.
           &logger("========================== CDR Starts : ".$data->{variables}->{effective_destination_number}."=====================");     
     
           if ($data->{variables}->{hangup_cause} ne 'NORMAL_CLEARING' && $data->{variables}->{hangup_cause} ne 'ALLOTTED_TIMEOUT') {
-        	  	$data->{variables}->{duration} = 0;
+        	  	$data->{variables}->{billsec} = 0;
           }
             
           #get require parameters from dialplan varaibles  
@@ -76,7 +76,7 @@ if ( $params->{cdr} or $params->{POSTDATA}) { # PROCESS CDRs.
           my $parent_cost = 0;
           my $cost = 0;
           $data->{variables}->{package_id} = 0;         
-          my $actual_duration = $data->{variables}->{duration};
+          my $actual_duration = $data->{variables}->{billsec};
           my $actual_calltype = $data->{variables}->{calltype};
           
           
@@ -100,7 +100,7 @@ if ( $params->{cdr} or $params->{POSTDATA}) { # PROCESS CDRs.
           $parent_cost = ($parentid > 0) ? &calc_cost($data,$origination_rate->{$parentid}) : $provider_cost;
           $cost = ($parent_cost > 0) ? $parent_cost : $provider_cost;
                     
-          &logger("Customer Debit : ".$debit." ------ Cost : ".$cost." -------- Provider Cost : ".$provider_cost."----- Duration : ".$data->{variables}->{duration});
+          &logger("Customer Debit : ".$debit." ------ Cost : ".$cost." -------- Provider Cost : ".$provider_cost."----- Duration : ".$data->{variables}->{billsec});
           
           #Converting all dates to GMT
           $data->{variables}->{profile_start_stamp} = &convert_to_gmt($data,$data->{variables}->{profile_start_stamp});

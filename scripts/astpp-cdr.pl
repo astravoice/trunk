@@ -77,16 +77,16 @@ sub calc_cost()
             
 #    if ($data->{variables}->{hangup_cause} ne 'NORMAL_CLEARING' && $data->{variables}->{hangup_cause} ne 'ALLOTTED_TIMEOUT') {
 #        $duration = 0;
-#        $data->{variables}->{duration} = 0;
+#        $data->{variables}->{billsec} = 0;
 #    }   
     
     if (defined($rate))
     {
-        if ($data->{variables}->{duration} > 0 && ($data->{variables}->{hangup_cause} eq 'NORMAL_CLEARING' || $data->{variables}->{hangup_cause} eq 'ALLOTTED_TIMEOUT')) {
+        if ($data->{variables}->{billsec} > 0 && ($data->{variables}->{hangup_cause} eq 'NORMAL_CLEARING' || $data->{variables}->{hangup_cause} eq 'ALLOTTED_TIMEOUT')) {
             
             $rate->{INC} = ($rate->{INC} == 0) ? 1 : $rate->{INC};
             
-            my $total_seconds = ( $data->{variables}->{duration} - $rate->{'INCLUDEDSECONDS'} ) / $rate->{INC};
+            my $total_seconds = ( $data->{variables}->{billsec} - $rate->{'INCLUDEDSECONDS'} ) / $rate->{INC};
 	        $total_seconds = ( $total_seconds < 0 ) ? 0 : $total_seconds;
 	        	    
 	        my $billseconds = ceil($total_seconds) * $rate->{INC};                
@@ -126,8 +126,8 @@ sub package_calculation()
 		
 		if ( $package->{includedseconds} > $counter->{seconds}) {
 			my $availableseconds = $package->{includedseconds} - $counter->{seconds};
-			my $freeseconds = ($availableseconds >= $data->{variables}->{duration}) ? $data->{variables}->{duration} : $availableseconds;
-			$data->{variables}->{duration} = ($availableseconds >= $data->{variables}->{duration}) ? $data->{variables}->{duration} : $availableseconds;
+			my $freeseconds = ($availableseconds >= $data->{variables}->{billsec}) ? $data->{variables}->{billsec} : $availableseconds;
+			$data->{variables}->{billsec} = ($availableseconds >= $data->{variables}->{billsec}) ? $data->{variables}->{billsec} : $availableseconds;
 			&insert_update_query("Update counter","UPDATE counters SET seconds = ".($counter->{seconds} + $freeseconds ). " WHERE id = ". $counter->{id});
 			$data->{variables}->{package_id}=$package->{id};
 			$data->{variables}->{calltype} = "FREE";
