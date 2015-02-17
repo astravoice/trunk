@@ -184,7 +184,8 @@ class GenerateInvoice extends MX_Controller {
             foreach($accounttax_query as $tax_key => $tax_value){ 
             $taxes_info=$this->db->get_where('taxes',array('id'=>$tax_value['taxes_id']));
             if($taxes_info->num_rows() > 0 ){
-                    $tax_value=$taxes_info->result_array()[0];
+		$tax_value=$taxes_info->result_array();
+		$tax_value= $tax_value[0];
                  if($tax_value["taxes_priority"] == ""){
                      $tax_priority = $tax_value["taxes_priority"];
                  }else if($tax_value["taxes_priority"] > $tax_priority){
