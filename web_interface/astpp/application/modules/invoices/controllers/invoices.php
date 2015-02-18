@@ -312,7 +312,7 @@ class Invoices extends MX_Controller {
             $customer_address .= "\n";
 
         if ( $data['accountinfo']['address_1'] != "")
-            $customer_address .= $data['accountinfo']['address_1'] . "," .$data['accountinfo']['address_2'] ."," . $data['accountinfo']['address_3'] . "\n";
+            $customer_address .= $data['accountinfo']['address_1'] . "," .$data['accountinfo']['address_2'] .",". "\n";
 
         if ( $data['accountinfo']['city'] != "")
             $customer_address .= $data['accountinfo']['city'] . "\n";

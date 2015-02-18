@@ -42,7 +42,7 @@
 <? startblock('content') ?>        
 
   <ul class="tabs" data-persist="true">
-        <li><a href="#customer_details">Provider Details</a></li>
+        <li><a href="#provider_details">Provider Details</a></li>
         <li><a href="#accounts">IP Settings</a></li>        
         <li><a href="#invoices">Invoices</a></li>
          <li><a id ='tab4' href="#cdrs">CDRs</a></li>
@@ -52,7 +52,7 @@
           <div class="col-md-12">
             <section class="slice color-three no-margin">
                 <div class="w-section inverse no-padding">
-            <div id="customer_details">
+            <div id="provider_details">
                     <div style="color:red;margin-left: 60px;">
                         <?php
                         if (isset($validation_errors)) {

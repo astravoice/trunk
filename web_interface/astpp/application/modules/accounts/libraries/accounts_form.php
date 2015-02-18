@@ -25,7 +25,7 @@ class Accounts_form {
         $this->CI = & get_instance();
     }
 
-    function get_customer_form_fields($entity_type=false,$id=false) {
+       function get_customer_form_fields($entity_type=false,$id=false) {
 	$expiry_date = date('Y-m-d H:i:s', strtotime('+10 years'));
         $readable=FALSE;
         $logintype = $this->CI->session->userdata('logintype');
@@ -37,6 +37,7 @@ class Accounts_form {
             $loginid = "0";
         }
           $sip_device=null;
+          $opensips_device=null;
          if(!$entity_type){
              $entity_type ='customer';
          }
@@ -46,7 +47,12 @@ class Accounts_form {
             
         }else{
             $val ='accounts.email';
-            $sip_device =array('Create SIP Device', 'sip_device_flag', 'CHECKBOX', array('name' => 'sip_device_flag', 'value' => 'on', 'checked' => false), '', 'tOOL TIP', '');
+            if(common_model::$global_config['system_config']['opensips']== 1){
+	      $opensips_device =array('Create Opensips Device', 'opensips_device_flag', 'CHECKBOX', array('name' => 'opensips_device_flag', 'value' => 'on', 'checked' => false), '', 'tOOL TIP', '');
+            }
+            else{
+	      $sip_device =array('Create SIP Device', 'sip_device_flag', 'CHECKBOX', array('name' => 'sip_device_flag', 'value' => 'on', 'checked' => false), '', 'tOOL TIP', '');
+            }
          }
          $type= $entity_type == 'customer' ? 0 : 3;
         $uname = $this->CI->common->find_uniq_rendno($this->CI->config->item('size_number'), 'number', 'accounts');
@@ -61,11 +67,12 @@ class Accounts_form {
         $form['Account Settings'] = array(
             array('Status', 'status', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_status'),
             array('Max Channels', 'INPUT', array('name' => 'maxchannels', 'size' => '20', 'maxlength' => '4', 'class' => "text field medium"), 'numeric', 'tOOL TIP', ''),
-            array('Number Translation', 'INPUT', array('name' => 'dialed_modify', 'size' => '20', 'maxlength' => '200', 'class' => "text field medium"), '', 'tOOL TIP', ''),
+            array('Number Translation', 'INPUT', array('name' => 'dialed_modify', 'size' => '20', 'maxlength' => '200', 'class' => "text field medium"), 'numeric', 'tOOL TIP', ''),
              array('First Used', 'INPUT', array('name' => 'first_used', 'size' => '20', 'readonly' => true, 'maxlength' => '200', 'class' => "text field medium",'value'=>'0000-00-00 00:00:00'), '', 'tOOL TIP', ''),
             array('Expiry Date', 'INPUT', array('name' => 'expiry', 'size' => '20', 'maxlength' => '200', 'class' => "text field medium",'value'=>$expiry_date,'id'=>'expiry'), '', 'tOOL TIP', ''),
             array('Valid Days', 'INPUT', array('name' => 'validfordays', 'size' => '20', 'maxlength' => '7', 'class' => "text field medium"), 'trim|numeric|min_length[1]|max_length[4]|xss_clean', 'tOOL TIP', ''),  
-            $sip_device
+            $sip_device,
+            $opensips_device
         );
 
         $form[  ucfirst($entity_type). ' Profile'] = array(
@@ -103,18 +110,24 @@ class Accounts_form {
         );        
         $form['button_save'] = array('name' => 'action', 'content' => 'Save', 'value' => 'save', 'type' => 'submit', 'class' => 'btn btn-line-parrot');
         $form['button_cancel'] = array('name' => 'action', 'content' => 'Cancel', 'value' => 'cancel', 'type' => 'button', 'class' => 'btn btn-line-sky margin-x-10',  'onclick' => 'return redirect_page(\'/accounts/customer_list/\')');
-        
-
         return $form;
     }
-    function customer_bulk_generate_form(){
+        function customer_bulk_generate_form(){
     $logintype = $this->CI->session->userdata('logintype');
+    $sip_device=null;
+    $opensips_device=null;
         if ($logintype == 1 || $logintype == 5) {
             $account_data = $this->CI->session->userdata("accountinfo");
             $loginid = $account_data['id'];
 
         }else{
             $loginid = "0";
+            if(common_model::$global_config['system_config']['opensips']== 1){
+	      $opensips_device =array('Create Opensips Device', 'opensips_device_flag', 'CHECKBOX', array('name' => 'opensips_device_flag', 'value' => 'on', 'checked' => false), '', 'tOOL TIP', '');
+            }
+            else{
+	      $sip_device =array('Create SIP Device', 'sip_device_flag', 'CHECKBOX', array('name' => 'sip_device_flag', 'value' => 'on', 'checked' => false), '', 'tOOL TIP', '');
+            }
         }
         $form['forms'] = array(base_url().'accounts/customer_bulk_save/', array("id" => "customer_bulk_form", "name" => "customer_bulk_form"));
         $form['General Details'] = array(
@@ -126,7 +139,8 @@ class Accounts_form {
             array('Country', 'country_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
             array('Timezone', 'timezone_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', ''),
             array('Pin', 'pin', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_allow'),
-	    array('Create SIP Device', 'sip_device_flag', 'CHECKBOX', array('name' => 'sip_device_flag', 'value' => 'on', 'checked' => false), '', 'tOOL TIP', '')
+	    $sip_device,
+	    $opensips_device
         );
         $form['Profile Details'] = array(
             array('Rate Group',array('name'=>'pricelist_id','class'=>'pricelist_id'), 'SELECT', '',"required", 'tOOL TIP', 'Please Enter account number', 'id', 'name', 'pricelists', 'build_dropdown', 'where_arr', array("status" => "0","reseller_id" => $loginid)),
@@ -438,7 +452,7 @@ class Accounts_form {
             array('Company', 'INPUT', array('name' => 'company_name[company_name]', 'value' => '', 'size' => '20', 'class' => "text field "), '', 'Tool tips info', '1', 'company_name[company_name-string]', '', '', '', 'search_string_type', ''),
             array('Entity Type', 'type', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_entity_type_customer'),
 		array('Rate Group', 'pricelist_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'name', 'pricelists', 'build_dropdown', 'where_arr', array("status" => "0","reseller_id" => "0")),
-		array('Account Type', 'posttoexternal', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_account_type'),
+		array('Account Type', 'posttoexternal', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_account_type_search'),
 
             array('Balance', 'INPUT', array('name' => 'balance[balance]', 'value' => '', 'size' => '20', 'class' => "text field "), '', 'Tool tips info', '1', 'balance[balance-integer]', '', '', '', 'search_int_type', ''),
             array('Credit Limit', 'INPUT', array('name' => 'credit_limit[credit_limit]', 'value' => '', 'size' => '20', 'class' => "text field "), '', 'Tool tips info', '1', 'credit_limit[credit_limit-integer]', '', '', '', 'search_int_type', ''),
@@ -484,7 +498,7 @@ array('', 'HIDDEN', 'ajax_search', '1', '', '', ''),
             array('Last Name', 'INPUT', array('name' => 'last_name[last_name]', 'value' => '', 'size' => '20', 'class' => "text field "), '', 'Tool tips info', '1', 'last_name[last_name-string]', '', '', '', 'search_string_type', ''),
             array('Company', 'INPUT', array('name' => 'company_name[company_name]', 'value' => '', 'size' => '20', 'class' => "text field "), '', 'Tool tips info', '1', 'company_name[company_name-string]', '', '', '', 'search_string_type', ''),
 	array('Rate Group', 'pricelist_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'name', 'pricelists', 'build_dropdown', 'where_arr', array("status" => "0","reseller_id" => "0")),
-	array('Account Type', 'posttoexternal', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_account_type'),
+	array('Account Type', 'posttoexternal', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_account_type_search'),
 
             array('Balance', 'INPUT', array('name' => 'balance[balance]', 'value' => '', 'size' => '20', 'class' => "text field "), '', 'Tool tips info', '1', 'balance[balance-integer]', '', '', '', 'search_int_type', ''),
             array('Credit Limit', 'INPUT', array('name' => 'credit_limit[credit_limit]', 'value' => '', 'size' => '20', 'class' => "text field "), '', 'Tool tips info', '1', 'credit_limit[credit_limit-integer]', '', '', '', 'search_int_type', ''),

@@ -397,8 +397,10 @@ sub dialout() {
     if(@termination_rates_info)
     {
           my $count = 0;
+          my $now = &now();
           
           $session->execute("export","call_processed=internal");
+          $session->execute("export","callstart=$now");
           $session->execute("export","originated_destination_number=$destination_number");
           $session->setVariable("continue_on_fail","true");
           $session->setVariable("hangup_after_bridge","true");

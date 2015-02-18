@@ -39,23 +39,25 @@ document.getElementsByName("sweep_id")[0].selectedIndex = <?=2?>;
 <?php startblock('content') ?>
 
 <section class="slice color-three">
-	<div class="w-section inverse no-padding">
-    	<div class="container">
-        	<div class="row">
-                <div class="col-md-12">      
-                         <div style="color:red;margin-left: 60px;">
-                                <?php
+ <div class="w-section inverse no-padding">
+				     <?php echo $form; ?>
+				     <?php
+					if(isset($validation_errors) && $validation_errors != ''){ ?>
+					    <script>
+						var ERR_STR = '<?php echo $validation_errors; ?>';
+						print_error(ERR_STR);
+					    </script>
+				     <? } ?>
+
+<!--                                <?php
                                 $data_errrors = json_decode($validation_errors);
                                 foreach ($data_errrors as $key => $value) {
                                     echo $value . "<br/>";
                                 }
                                 ?> 
                           </div>
-                        <?php echo $form; ?>
-                </div>  
-            </div>
-        </div>
-    </div>
+                        <?php echo $form; ?> -->
+                          </div> 
 </section>
 <? endblock() ?>
 <? startblock('sidebar') ?>

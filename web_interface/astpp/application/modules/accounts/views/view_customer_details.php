@@ -95,24 +95,25 @@
           <div class="col-md-12">
             <section class="slice color-three no-margin">
                 <div class="w-section inverse no-padding">
-            <div id="customer_details">
-                    <div style="color:red;margin-left: 60px;">
-                        <?php
-                        if (isset($validation_errors)) {
-                           $validation_array=json_decode($validation_errors);
-                           if(is_object($validation_array)){
-                           $validation_array = get_object_vars($validation_array);
-                           foreach($validation_array as $key=>$value)
-		              echo $value."<br/>";
-                           }
-                           else
-		              echo $validation_errors;
-                           
-                        }
-                        ?>
-                    </div>
-                <?php echo $form; ?>    
-            </div>
+<div class="w-section inverse no-padding" id ='customer_details'>
+				     <?php echo $form; ?>
+				     <?php
+					if(isset($validation_errors) && $validation_errors != ''){ ?>
+					    <script>
+						var ERR_STR = '<?php echo $validation_errors; ?>';
+						print_error(ERR_STR);
+					    </script>
+				     <? } ?>
+
+<!--                                <?php
+                                $data_errrors = json_decode($validation_errors);
+                                foreach ($data_errrors as $key => $value) {
+                                    echo $value . "<br/>";
+                                }
+                                ?> 
+                          </div>
+                        <?php echo $form; ?> -->
+                          </div>  
 <!--Accounts Tab Start-->
     <div id='account_ip'>
 <!--         <div class="container">

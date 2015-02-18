@@ -374,7 +374,10 @@ class common {
         $status_array = array('0' => 'Prepaid', '1' => 'Postpaid');
         return $status_array;
     }
-
+    function set_account_type_search($status = '') {
+        $status_array = array(''=>"--Select--",'0' => 'Prepaid', '1' => 'Postpaid');
+        return $status_array;
+    }
     function get_account_type($select = "", $table = "", $PTE) {
         return ($PTE == 1) ? "Postpaid" : "Prepaid";
     }

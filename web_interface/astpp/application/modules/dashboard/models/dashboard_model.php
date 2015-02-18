@@ -62,7 +62,8 @@ class Dashboard_model extends CI_Model {
     function get_customer_maximum_callminutes()
     {
 	
-	    $parent_id= ($this->session->userdata['accountinfo']['type'] == -1) ? 0  : $this->session->userdata['accountinfo']['id'];
+	    $accountinfo=$this->session->userdata('accountinfo');
+	    $parent_id= ($accountinfo['type'] == 1) ? $accountinfo['id']:0;
 	    $this->db->select('sum(billseconds) as billseconds,accountid');
 	    $this->db->from('cdrs');
 	    if($this->session->userdata('userlevel_logintype')!= 0 && $this->session->userdata('userlevel_logintype')!= 3)
@@ -78,7 +79,8 @@ class Dashboard_model extends CI_Model {
 
     function get_customer_maximum_callcount()
     {
-	    $parent_id= ($this->session->userdata['accountinfo']['type'] == -1) ? 0  : $this->session->userdata['accountinfo']['id'];
+	    $accountinfo=$this->session->userdata('accountinfo');
+	    $parent_id= ($accountinfo['type'] == 1) ? $accountinfo['id']:0;
 	    $this->db->select('count(uniqueid) as call_count,accountid');
 	    $this->db->from('cdrs');
 	    if($this->session->userdata('userlevel_logintype')!= 0 && $this->session->userdata('userlevel_logintype')!= 3)

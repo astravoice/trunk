@@ -25,7 +25,7 @@ class Accounts_model extends CI_Model {
         parent::__construct();
     }
 
-     function add_account($accountinfo) {
+function add_account($accountinfo) {
         $logintype = $this->session->userdata('logintype');
         $accountinfo['reseller_id']=0;
         if ($logintype == 1 || $logintype == 5) {
@@ -47,41 +47,51 @@ class Accounts_model extends CI_Model {
             $sip_flag = '1';
             unset($accountinfo['sip_device_flag']);
         }
+        $opensip_flag = '0';
+        if (isset($accountinfo['opensips_device_flag'])) {
+            $opensip_flag = '1';
+            unset($accountinfo['opensips_device_flag']);
+        }
         if(isset($accountinfo['tax_id'])){
             unset($accountinfo['tax_id']);
         }
         $accountinfo['creation']=gmdate('Y-m-d H:i:s');
-//echo "<pre>"; print_r($accountinfo); exit;        
-	$result = $this->db->insert('accounts', $accountinfo);
-//echo $this->db->last_query(); exit;
+ 	$result = $this->db->insert('accounts', $accountinfo);
         $last_id = $this->db->insert_id();
         if ($reseller_flag == '1') {
-            //create one default pricelist for reseller
-
             $reseller_array = array('name' => $accountinfo['number'], 'status' => '1', 'reseller_id' => $last_id);
             $result = $this->db->insert('pricelists', $reseller_array);
         }
         if ($sip_flag == '1') {
             $query = $this->db_model->select("*", "sip_profiles",array('name'=>"default"), "id", "ASC", '1', '0');
-
             $sip_id = $query->result_array();
             $free_switch_array = array('fs_username' => $accountinfo['number'],
                 'fs_password' => $accountinfo['password'],
                 'context' => 'default',
-                'effective_caller_id_name' => '',
-                'effective_caller_id_number' => '',
+                'effective_caller_id_name' => $accountinfo['number'],
+                'effective_caller_id_number' => $accountinfo['number'],
                 'sip_profile_id' => $sip_id[0]['id'],
                 'pricelist_id' => $accountinfo['pricelist_id'],
                 'accountcode' => $last_id,
-                'status' => $accountinfo['status'],);
+                'status' => $accountinfo['status']);
             $this->load->model('freeswitch/freeswitch_model');
             $this->freeswitch_model->add_freeswith($free_switch_array);
+        }
+        if($opensip_flag == 1){
+            $opensips_array = array('username' => $accountinfo['number'],
+		    'domain' => common_model::$global_config['system_config']['opensips_domain'],
+                    'password'=>$accountinfo['password'],
+                    'accountcode'=>$accountinfo['number'],
+                    'pricelist_id'=>$accountinfo['pricelist_id']);
+	    $this->load->model('opensips/opensips_model');
+	    $this->opensips_model->add_opensipsdevices($opensips_array);
         }
         if ($accountinfo['type'] == '0') {
             $this->common->mail_to_users('email_add_user', $accountinfo);
         }
         return $last_id;
     }
+
 
     function edit_account($accountinfo, $edit_id) {
         unset($accountinfo['action']);
@@ -92,6 +102,8 @@ class Accounts_model extends CI_Model {
     function bulk_insert_accounts($add_array){
         $logintype = $this->session->userdata('logintype');
         $add_array['reseller_id']=0;
+        $insert_array=array();
+        $sip_device_array=array();
         if ($logintype == 1 || $logintype == 5) {
             $add_array['reseller_id'] = $this->session->userdata["accountinfo"]['id'];
         }
@@ -131,69 +143,90 @@ class Accounts_model extends CI_Model {
             $sip_profile_id=$sip_id[0]['id'];
          for ($i = 0; $i < $count; $i++) {
             $acc_num=$number[$i];
-            $insert_array['number']=$acc_num;
-            $insert_array['password']=$password[$i];
-            $insert_array['pricelist_id']= $pricelist_id;
-            $insert_array['reseller_id']= $add_array['reseller_id'];
-            $insert_array['status']= 0;
-            $insert_array['credit_limit']= $credit_limit;
-            $insert_array['sweep_id']=0;
-            $insert_array['posttoexternal']=$add_array['posttoexternal'];
-            $insert_array['balance']=$balance;
-            $insert_array['currency_id']=$add_array['currency_id'];
-            $insert_array['country_id']=$add_array['country_id'];
-            $insert_array['timezone_id']=$add_array['timezone_id'];
-            $insert_array['company_name']=$add_array['company_name'];
-            $insert_array['invoice_day']=0;
-            $insert_array['first_name']= $acc_num;
-            $insert_array['type'] = 0;
-            $insert_array['validfordays'] = $add_array['validfordays'];
+            $current_password=$password[$i];
+            $insert_array=array('number'=>$acc_num,
+				      'password'=>$current_password,
+				      'pricelist_id'=>$pricelist_id,
+				      'reseller_id'=>$add_array['reseller_id'],
+				      'status'=>0,
+				      'credit_limit'=>$credit_limit,
+				      'sweep_id'=>0,
+				      'posttoexternal'=>$add_array['posttoexternal'],
+				      'balance'=>$balance,
+				      'currency_id'=>$add_array['currency_id'],
+				      'country_id'=>$add_array['country_id'],
+				      'timezone_id'=>$add_array['timezone_id'],
+				      'company_name'=>$add_array['company_name'],
+				      'invoice_day'=>0,
+				      'first_name'=>$acc_num,
+				      'type'=>0,
+				      'validfordays'=>$add_array['validfordays']
+				      );
             if($pin_flag == 1){
 	      $insert_array['pin']=$pin[$i];
             }
-//            print_r($insert_array);
-            $this->db->insert('accounts',$insert_array);
-            $last_id=$this->db->insert_id();
-            $parms_array = array('password' => $password[$i]);
-	    $parms_array_vars = array('effective_caller_id_name' => $acc_num,
+             $this->db->insert('accounts',$insert_array);
+             $last_id=$this->db->insert_id();
+            $params_array = array('password' => $password[$i]);
+	    $params_array_vars = array('effective_caller_id_name' => $acc_num,
 				      'effective_caller_id_number' => $acc_num,
 				      'user_context' => 'default');
-            
-            $sip_device_array[$i]['username']=$acc_num;
-            $sip_device_array[$i]['accountid']=$last_id;
-            $sip_device_array[$i]['sip_profile_id']=$sip_profile_id;
-            $sip_device_array[$i]['dir_params']=json_encode($parms_array);
-            $sip_device_array[$i]['dir_vars'] = json_encode($parms_array_vars);
-            $sip_device_array[$i]['status'] = 0;
+            $sip_device_array[$i]=array('username'=>$acc_num,
+					'accountid'=>$last_id,
+					'sip_profile_id'=>$sip_profile_id,
+					'dir_params'=>json_encode($params_array),
+					'dir_vars'=>json_encode($params_array_vars),
+					'status'=>0);
 	  }
 	  $this->db->insert_batch('sip_devices',$sip_device_array);
         }else{
+         $opensip_flag = '0';
+	 if (isset($add_array['opensips_device_flag'])) {
+            $opensip_flag = '1';
+            $opensips_domain=common_model::$global_config['system_config']['opensips_domain'];
+            unset($add_array['opensips_device_flag']);
+	 }
           for ($i = 0; $i < $count; $i++) {
             $acc_num=$number[$i];
-            $insert_array[$i]['number']=$acc_num;
-            $insert_array[$i]['password']=$password[$i];
-            $insert_array[$i]['pricelist_id']= $pricelist_id;
-            $insert_array[$i]['reseller_id']= $add_array['reseller_id'];
-            $insert_array[$i]['status']= 0;
-            $insert_array[$i]['credit_limit']= $credit_limit;
-            $insert_array[$i]['sweep_id']=0;
-            $insert_array[$i]['posttoexternal']=$add_array['posttoexternal'];
-            $insert_array[$i]['balance']=$balance;
-            $insert_array[$i]['currency_id']=$add_array['currency_id'];
-            $insert_array[$i]['country_id']=$add_array['country_id'];
-            $insert_array[$i]['timezone_id']=$add_array['timezone_id'];
-            $insert_array[$i]['company_name']=$add_array['company_name'];
-            $insert_array[$i]['invoice_day']=0;
-            $insert_array[$i]['first_name']= $acc_num;
-            $insert_array[$i]['type'] = 0;
-            $insert_array[$i]['validfordays'] = $add_array['validfordays'];
+            $current_password=$password[$i];
+            $insert_array[$i]=array('number'=>$acc_num,
+				      'password'=>$current_password,
+				      'pricelist_id'=>$pricelist_id,
+				      'reseller_id'=>$add_array['reseller_id'],
+				      'status'=>0,
+				      'credit_limit'=>$credit_limit,
+				      'sweep_id'=>0,
+				      'posttoexternal'=>$add_array['posttoexternal'],
+				      'balance'=>$balance,
+				      'currency_id'=>$add_array['currency_id'],
+				      'country_id'=>$add_array['country_id'],
+				      'timezone_id'=>$add_array['timezone_id'],
+				      'company_name'=>$add_array['company_name'],
+				      'invoice_day'=>0,
+				      'first_name'=>$acc_num,
+				      'type'=>0,
+				      'validfordays'=>$add_array['validfordays']
+				      );
             if($pin_flag == 1){
 	      $insert_array[$i]['pin']=$pin[$i];
-            }    
+            }
+            if($opensip_flag==1){
+	      $opensips_array[$i] = array('username' => $acc_num,
+		    'domain' => $opensips_domain,
+                   'password'=>$current_password,
+                   'accountcode'=>$acc_num,
+                   'pricelist_id'=>$pricelist_id);
+            }
         }
 	  $this->db->insert_batch('accounts',$insert_array);
+	  if($opensip_flag == 1){
+	      $db_config = Common_model::$global_config['system_config'];
+	      $opensipdsn = "mysql://" . $db_config['opensips_dbuser'] . ":" . $db_config['opensips_dbpass'] . "@" . $db_config['opensips_dbhost'] . "/" . $db_config['opensips_dbname'] . "?char_set=utf8&dbcollat=utf8_general_ci&cache_on=true&cachedir=";
+	      $this->opensips_db = $this->load->database($opensipdsn, true);
+	      $this->opensips_db = $this->load->database($opensipdsn, true);
+	      $this->opensips_db->insert_batch("subscriber", $opensips_array);
+	  }
         }
-        
 	return TRUE;
     }
     function get_max_limit($add_array){
