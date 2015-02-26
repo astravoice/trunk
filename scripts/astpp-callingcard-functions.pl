@@ -230,6 +230,11 @@ sub process_destination()
         return 1;
     }
     
+    #Do number translation if defined in account
+    if ($carddata->{dialed_modify}) {
+        $destination = &number_translation('destination_number'=>$destination,'translation'=>$carddata->{dialed_modify});
+    }
+    
     #Fetch status of length of call and orgination route info
     my ($maxlength,$rategroup_info,$origination_rates_info,$origination_dp_string) = &max_length('destination_number'=>$destination,'carddata'=>$carddata);
     

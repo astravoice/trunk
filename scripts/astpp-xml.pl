@@ -335,6 +335,7 @@ sub generate_cc_dialplan()
 	$xml .= "<extension name=\"" . $arg{destination_number} . "\">\n";
 	$xml .= "<condition field=\"destination_number\" expression=\"" . $arg{destination_number} . "\">\n";	
 	$xml .= "<action application=\"log\" data=\"INFO ASTPP - Calling Card Call\"/>\n";
+	$xml .= "<action application=\"answer\"/>\n";
     $xml .= "<action application=\"perl\" data=\"astpp-callingcards.pl\"/>\n";
 	$xml .= "</condition>\n";
 	$xml .= "</extension>\n";
