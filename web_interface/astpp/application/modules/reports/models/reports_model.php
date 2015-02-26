@@ -484,11 +484,11 @@ class Reports_model extends CI_Model {
         if($flag){
 if(!$export){
 
-            $result=$this->db_model->select("accountid,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(billseconds) AS acd,MAX(billseconds) AS mcd, SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost, SUM(reseller_cost) AS price", "reseller_cdrs",'' , "callstart", "DESC",$limit,$start,'pattern,accountid');          
+            $result=$this->db_model->select("accountid,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(case when billseconds > 0 then billseconds end) AS acd,MAX(billseconds) AS mcd, SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost, SUM(reseller_cost) AS price", "reseller_cdrs",'' , "callstart", "DESC",$limit,$start,'pattern,accountid');          
         }
 else
 {
-	$result=$this->db_model->select("accountid,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(billseconds) AS acd,MAX(billseconds) AS mcd, SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost, SUM(reseller_cost) AS price", "reseller_cdrs",'' , "callstart", "DESC",'','','pattern,accountid');  
+	$result=$this->db_model->select("accountid,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(case when billseconds > 0 then billseconds end) AS acd,MAX(billseconds) AS mcd, SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost, SUM(reseller_cost) AS price", "reseller_cdrs",'' , "callstart", "DESC",'','','pattern,accountid');  
 }
     }    else{
             $this->db->order_by('callstart','desc');
@@ -506,13 +506,13 @@ else
         if($flag){
 if(!$export){
 	    
-	 $result=$this->db_model->select("provider_id,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(billseconds) AS acd,MAX(billseconds) AS mcd, SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost, SUM(provider_call_cost) AS price", "cdrs",'' , "callstart", "DESC",$limit,$start,'pattern,provider_id');
+	 $result=$this->db_model->select("provider_id,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(case when billseconds > 0 then billseconds end) AS acd,MAX(billseconds) AS mcd, SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost, SUM(provider_call_cost) AS price", "cdrs",'' , "callstart", "DESC",$limit,$start,'pattern,provider_id');
 
         }
 else
 {
 
- $result=$this->db_model->select("provider_id,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(billseconds) AS acd,MAX(billseconds) AS mcd, SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost, SUM(provider_call_cost) AS price", "cdrs",'' , "callstart", "DESC",'','','pattern,provider_id');
+ $result=$this->db_model->select("provider_id,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(case when billseconds > 0 then billseconds end) AS acd,MAX(billseconds) AS mcd, SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost, SUM(provider_call_cost) AS price", "cdrs",'' , "callstart", "DESC",'','','pattern,provider_id');
 
 }
      }   else{
@@ -537,11 +537,11 @@ else
        if($flag){
 		if(!$export){
 
-               $result=$this->db_model->select("accountid,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(billseconds) AS acd,MAX(billseconds) AS mcd,SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost,SUM(cost) AS price", "cdrs",'' , "callstart", "DESC",$limit,$start,'pattern,accountid,type');
+               $result=$this->db_model->select("accountid,uniqueid,notes,pattern, COUNT(*) AS attempts,AVG(case when billseconds > 0 then billseconds end) AS acd,MAX(billseconds) AS mcd,SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost,SUM(cost) AS price", "cdrs",'' , "callstart", "DESC",$limit,$start,'pattern,accountid,type');
 }
 else{
 
-  $result=$this->db_model->select("accountid,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(billseconds) AS acd,MAX(billseconds) AS mcd,SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost,SUM(cost) AS price", "cdrs",'' , "callstart", "DESC",'','','pattern,accountid,type');
+  $result=$this->db_model->select("accountid,uniqueid,notes,pattern, COUNT(*) AS attempts, AVG(case when billseconds > 0 then billseconds end) AS acd,MAX(billseconds) AS mcd,SUM(billseconds) AS billable,SUM(CASE WHEN disposition IN (('SUCCESS'),('NORMAL_CLEARING')) THEN 1 ELSE 0 END) as completed,SUM(debit) AS cost,SUM(cost) AS price", "cdrs",'' , "callstart", "DESC",'','','pattern,accountid,type');
 
 }
 

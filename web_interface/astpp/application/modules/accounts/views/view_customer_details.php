@@ -29,11 +29,12 @@
 	 build_grid("animap_list","<?php echo base_url(); ?>accounts/customer_animap_json/<?= $account_data[0]['id']; ?>", <? echo json_encode($animap_grid_field) ?>,"");
        
         $(".sweep_id").change(function(e){
-            if(this.value != 0){
+        var sweep_id =$('.sweep_id option:selected').val();
+            if(sweep_id != 0){
                 $.ajax({
                     type:'POST',
-                    url: "<?= base_url()?>/accounts/customer_invoice_option",
-                    data:"sweepid="+this.value, 
+                    url: "<?= base_url()?>/accounts/customer_invoice_option/<?=$invoice_date?>",
+                    data:"sweepid="+sweep_id, 
                     success: function(response) {
                         $(".invoice_day").html(response);
                         $('.invoice_day').show();
@@ -56,6 +57,13 @@
                 ip: {
                     required: true,
                     IP4Checker: true
+                }
+            }
+        }); 
+        $('#ani_map').validate({
+            rules: {
+                number: {
+                    required: true,
                 }
             }
         }); 
@@ -276,7 +284,7 @@
     </div> 
     <div id='animap'>
 		<div class="col-md-12 color-three padding-b-20 padding-t-20">
-                    <form method="post" name="ip_map" id="ip_map" action="<?= base_url() ?>accounts/customer_animap_action/add/<?= $account_data[0] ['id'] ?>/<?= $entity_name; ?>" enctype="multipart/form-data">
+                    <form method="post" name="ani_map" id="ani_map" action="<?= base_url() ?>accounts/customer_animap_action/add/<?= $account_data[0] ['id'] ?>/<?= $entity_name; ?>" enctype="multipart/form-data">
                               <!--  <input type="hidden" id="animap_id" name="animap_id" value="" />
                                 <input type="hidden" name="id" id='id' value='' /> -->
                                  <label class="col-md-1" style="padding-left:50px;">ANI:</label>

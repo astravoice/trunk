@@ -13,11 +13,12 @@
         build_grid("cdrs_grid","<?php echo base_url(); ?>accounts/customer_details_json/reports/<?= $account_data[0]['id']; ?>",<? echo $cdrs_grid_fields ?>,"");        
     
         $(".sweep_id").change(function(e){
-            if(this.value != 0){
+        var sweep_id =$('.sweep_id option:selected').val();
+            if(sweep_id != 0){
                 $.ajax({
                     type:'POST',
-                    url: "<?= base_url()?>/accounts/customer_invoice_option",
-                    data:"sweepid="+this.value, 
+                    url: "<?= base_url()?>/accounts/customer_invoice_option/<?=$invoice_date?>",
+                    data:"sweepid="+sweep_id, 
                     success: function(response) {
                         $(".invoice_day").html(response);
                         $('.invoice_day').show();
@@ -28,7 +29,8 @@
                 $('label[for="Billing Day"]').hide()
                 $('.invoice_day').css('display','none');                
             }
-        })
+        });
+        $(".sweep_id").change();
 
 });
 </script>

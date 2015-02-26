@@ -402,37 +402,33 @@ class User extends MX_Controller {
         
         return true;
     }
-      function user_animap_action($action, $aniid = "") {
-
-        if ($action == "add") {
-	 	$ani = $this->input->post("ANI", true);
-	    	$account_data = $this->session->userdata("accountinfo");
-		$where = array('accountid' => $this->session->userdata['accountinfo']['id'],"number"=>$ani);
-		$duplicate_ani =$this->common->get_field_name('number','ani_map',$where);
-		if($duplicate_ani == '')
-			{
-				if ($ani != "") {
-                			$insert_arr = array("number" => $this->input->post("ANI", true), "accountid" => 					$account_data["id"]);
-                			$this->db->insert("ani_map", $insert_arr);
-              				$this->session->set_flashdata('astpp_errormsg', 'Add ANI sucessfully!');
-                			redirect(base_url() . "user/user_animap_list/");
-			        }
-	 			else {
-               				 redirect(base_url() . "user/user_animap_list/");
-                }
-	}
-	else
-	{
- 		$this->session->set_flashdata('astpp_notification', 'Duplicate ANI found.');
-		redirect(base_url() . "user/user_animap_list/");
-	}
- 
-}
-        if ($action == "delete") {
-            $this->db_model->delete("ani_map", array("id" => $aniid));
-            redirect(base_url() . "user/user_animap_list/");
-        }
-redirect(base_url() . "user/user_animap_list/");
+    function user_animap_action($action, $aniid = "") {
+        $ani = $this->input->post();
+         if ($action == "add" && $ani['ANI'] != '') {
+             $this->db->where('number',$ani['ANI']);
+             $this->db->select('count(id) as count');
+             $cnt_result=$this->db->get('ani_map');
+             $cnt_result=$cnt_result->result_array();
+             $count=$cnt_result[0]['count'];
+             if($count == 0 && $ani['ANI'] > 0){
+                $accountinfo = $this->session->userdata("accountinfo"); 
+ 		$insert_arr = array("number" => $this->input->post('number'),
+				    "accountid" => $accountinfo['id'],
+				    "context" => "default");
+ 		$this->db->insert("ani_map", $insert_arr);
+ 		$this->session->set_flashdata('astpp_errormsg', 'Add ANI Sucessfully!');
+ 		redirect(base_url() . "user/user_animap_list/");
+ 	    }
+ 	    else{
+  		$this->session->set_flashdata('astpp_notification', ' ANI already Exists.');
+ 		redirect(base_url() . "user/user_animap_list/");
+ 	    }
+       }
+       if ($action == "delete") {
+          $this->session->set_flashdata('astpp_notification', 'ANI removed sucessfully!');
+          $this->db_model->delete("ani_map", array("id" => $aniid));
+          redirect(base_url() . "user/user_animap_list/");
+       }
     }
 
     function user_cdrs_report() {

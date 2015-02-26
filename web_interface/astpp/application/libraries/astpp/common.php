@@ -215,14 +215,18 @@ class common {
         }
         return rtrim($value, ',');
     }
-    function set_invoice_option($select = "", $table = "", $call_type=""){
+    function set_invoice_option($select = "", $table = "", $call_type="",$edit_value=''){
 
+        $invoice_date=false;
         $uri_segment = $this->CI->uri->segments;
-        if(isset($uri_segment[3])){
+        if(isset($uri_segment[3]) && empty($edit_value)){
             $field_name = $this->CI->db_model->getSelect("sweep_id,invoice_day","accounts",array("id"=>$uri_segment[3]));
             $field_name= $field_name->result_array();
             $select = $field_name[0]["sweep_id"];
-            $invoice_daya= $field_name[0]["invoice_day"];
+            $invoice_date= $field_name[0]["invoice_day"];
+        }
+        else{
+            $invoice_date=$edit_value;
         }
         if($select == "" || $select == "0"){
             $daily_arr = array("0"=>"0");
@@ -244,10 +248,10 @@ class common {
             for($i=1; $i<29; $i++){
                 $mon_arr[$i]= $i;
             }
-            if(isset($uri_segment[3])){
+            if(isset($uri_segment[3]) && empty($edit_value)){
                 return $mon_arr;
             }else{
-                $day = date('d');
+		  $day = $invoice_date > 0 ? $invoice_date : date('d');
                 $month_drp = form_dropdown(array("name"=>'invoice_day',"class"=>"invoice_day"),$mon_arr,$day );
                 return $month_drp;
             }
@@ -662,8 +666,8 @@ function mail_to_users($type, $accountinfo,$attachment="",$amount="") {
         $useremail = $accountinfo['email'];
 		
 	$message = html_entity_decode($message);
-	$message = str_replace("#COMPANY_NAME#", $settings_reply_email, $message);
-	$message = str_replace("#COMPANY_EMAIL#", $company_name, $message);
+	$message = str_replace("#COMPANY_EMAIL#", $settings_reply_email, $message);
+	$message = str_replace("#COMPANY_NAME#", $company_name, $message);
 	$message = str_replace("#COMPANY_WEBSITE#", $company_website, $message);
 	$message = str_replace("</p>", "", $message);
 	
@@ -839,6 +843,21 @@ function mail_to_users($type, $accountinfo,$attachment="",$amount="") {
 	  }
 // 	  echo $gmtoffset;exit;
 	  return $gmtoffset;
+     }
+     function subreseller_list($parent_id=''){
+      $customer_id = $parent_id;
+      $query='select id from accounts where reseller_id = '.$parent_id .' AND deleted = 0 AND type in (1)';
+      $reseller_get=$parent_id;
+      $result=$this->CI->db->query($query);
+      if($result->num_rows() > 0 ){
+	$result=$result->result_array();
+	foreach($result as $data){
+	  if(isset($data['id']) && $data['id'] != ''){
+	    $reseller_get.=",".$this->subreseller_list($data['id'])."";
+	  }
+	}
+      }
+      return $reseller_get;
      }
 
 }

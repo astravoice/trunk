@@ -3,13 +3,11 @@
 <? startblock('extra_head') ?>
 <script type="text/javascript">
     $(document).ready(function() {
-//         $(".invoice_day").hide();
-//         $('label[for="Billing Day"]').hide()
-       
-document.getElementsByName("currency_id")[0].selectedIndex = <?=$currency_id-1?>;
-document.getElementsByName("timezone_id")[0].selectedIndex = <?=$timezone_id-1?>;
-document.getElementsByName("country_id")[0].selectedIndex = <?=$country_id-1?>;
-document.getElementsByName("sweep_id")[0].selectedIndex = <?=1?>;
+   $(".country_id").val(<?=$country_id?>);
+   $(".timezone_id").val(<?=$timezone_id?>);
+   $(".currency_id").val(<?=$currency_id?>);
+   <?php if($entity_name != 'admin' && $entity_name !='subadmin'){ ?>
+   document.getElementsByName("sweep_id")[0].selectedIndex = <?=1?>;
 
 	 $(".sweep_id").change(function(e){
             if(this.value != 0){
@@ -29,7 +27,9 @@ document.getElementsByName("sweep_id")[0].selectedIndex = <?=1?>;
             }
         });
         $(".sweep_id").change();
+        <?php } ?> 
         });
+       
 </script>
 <?php endblock() ?>
 <?php startblock('page-title') ?>

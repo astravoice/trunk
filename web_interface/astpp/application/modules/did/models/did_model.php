@@ -194,7 +194,7 @@ class DID_model extends CI_Model {
 	  $flag='1';
         }
         
-        $this->insert_reseller_pricing($accountinfo['id'], $post);
+        $this->insert_reseller_pricing($accountinfo, $post);
 //         $this->update_dids_reseller($post);
 
 // 	$query_pricelist = $this->db_model->getSelect("*", "pricelists", array('name' => $accountinfo['number']));
@@ -215,9 +215,9 @@ class DID_model extends CI_Model {
         return true;
     }
 
-    function insert_reseller_pricing($id, $post) {
-
-        $insert_array = array('reseller_id' => $id, 'type' => '1', 'note' => $post['number'],
+function insert_reseller_pricing($accountinfo, $post) {
+        $insert_array = array('reseller_id' => $accountinfo['id'], 'type' => '1', 'note' => $post['number'],
+            'parent_id'=>$accountinfo['reseller_id'],
             'monthlycost' => $post['monthlycost'],
             'prorate' => $post['prorate'],
             'setup' => $post['setup'],

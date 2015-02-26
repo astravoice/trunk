@@ -575,7 +575,7 @@ class Invoices extends MX_Controller {
         $this->fpdf->Output($download_path, "D");
         
     }
-        function receipt_download($invoiceid) {
+    function receipt_download($invoiceid) {
         $accountid = $this->common->get_field_name('accountid', 'invoices', $invoiceid);	
         $accountdata = $this->db_model->getSelect("*","accounts",array("id"=>$accountid));
         $accountdata =  $accountdata->result_array();
@@ -807,17 +807,66 @@ class Invoices extends MX_Controller {
             $data_final = array();
 	    $y=120;
 	    $this->fpdf->SetFillColor(255, 255, 255);
+	    $fixed_length=30;
+	    $desc_str=null;
             foreach ($charge_list as $charge_key => $charge_value) {
-            $description=wordwrap($charge_value['description'], 30, "\n");
-            $array= explode("\n", $description);
-            $total_lines=count($array);
-            $total_lines=$total_lines-1;
-            if($total_lines > 1){
-	      $custom_height=$total_lines*5+5;
-            }
-            else{
-              $custom_height=5;
-            }
+            $description=trim($charge_value['description']);
+/*            
+            
+            
+            echo "<pre>";*/
+	    $description_arr=array();
+            $fixed_length=20;
+	    $list = explode("\n", $description);
+// 	    print_r($list);
+	    $j=0;
+	    foreach($list as $key=>$value){
+	      $substr=strlen($value);
+	      if($substr > $fixed_length){
+	      $last_limit= ceil($substr/$fixed_length);
+	          for($i=1;$i<=$last_limit;$i++){
+                   $start =$i!=1 ?(($i-1)*$fixed_length) :0 ;
+                      $subextensions=null;
+                      $extra_extension_length=null;
+                      $subextensions=substr($value,$start,$fixed_length);
+                      $last_extension='last_extension';
+                      if($i!=$last_limit){
+                      $last_extension = substr(strrchr($subextensions, ","), 1);
+                      }
+                      else{
+                      $last_extension=null;
+                      }
+                      if($last_extension){
+                       $extra_extension_length=strlen($last_extension);
+                       $custom_string =substr($subextensions, 0,($extra_extension_length)*(-1));
+                      }
+                      else{
+                        $custom_string=$subextensions;
+                      }
+                      $array[$i]=array('subextensions'=>$subextensions,"last_extension"=>$last_extension);
+//                       echo $custom_string;
+                      $custom_string= rtrim($custom_string,',');
+                      if(!empty($array[$i-1]['last_extension']) && $i !=1){
+                      $custom_string=$array[$i-1]['last_extension'].$custom_string;
+                      }
+                      $description_arr[$j]=$custom_string."<br/>";
+                      $j++;
+//                       echo "Sub string".$subextensions."Custom string : ".$custom_string."Last extension ".$last_extension."<br/>";
+//                    echo "Custom string : ".$custom_string."<br/>";
+                   }
+	      }
+	      else{
+		$description_arr[$j]=$value;
+		$j++;
+	      }
+	    }
+            $total_lines=0;
+            $total_lines=count($description_arr);
+            if(!empty($myLastElement))
+	      $custom_height=($total_lines-1)*5;
+	    else   
+	      $custom_height=($total_lines)*5;
+	      $description= implode($description_arr,"\n");
                 $charge_name = $this->common->get_field_name('description', 'charges',$charge_value['charge_id']);
                 $package_name = $this->common->get_field_name('package_name', 'packages',$charge_value['package_id']);
                 $this->fpdf->SetXY(20,$y);
@@ -835,22 +884,7 @@ class Invoices extends MX_Controller {
             }
         }
 //         echo $y;exit;
-        foreach($data['invoice_total_list'] as $key => $values)
-        {
-            $data_to_total[$key] = $values;
-        }
-        foreach ($data_to_total as $key => $value) {
-		
-		$this->fpdf->SetXY(65, $y);
-		$this->fpdf->Cell(40, 5, $value['title'], 1, 1, 'L', false);
-		
-		$this->fpdf->SetXY(105, $y);
-		$this->fpdf->Cell(40, 5,$value['text'], 1, 1, 'L', false);
-		
-		$this->fpdf->SetXY(145, $y);
-		$this->fpdf->Cell(40, 5,$this->format_currency($value['value'])." ".$currency, 1, 1, 'L', false);
-		$y+=5;
-        }
+       
 //        $dimensions = $this->fpdf->table_total($data_final_total, "3");
         
 	

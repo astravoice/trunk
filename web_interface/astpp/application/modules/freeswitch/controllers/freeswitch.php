@@ -388,7 +388,8 @@ class Freeswitch extends MX_Controller {
                         $value['read_codec'],
                         $value['write_codec'],
                         $value['callstate'],
-			gmdate("H:i:s", strtotime(date("Y-m-d H:i:s")) - strtotime($value['created']))
+                        date("H:i:s", strtotime(date("Y-m-d H:i:s")) - $value['created_epoch'])
+//			gmdate("H:i:s", strtotime(date("Y-m-d H:i:s")) - strtotime($value['created']))
                         ));
                 $count++;
             } else {
@@ -749,39 +750,11 @@ $tmp=null;
 	    unset($sipprofile_data['action']);
 	    unset($sipprofile_data['sipstatus']);
 	    $insert_arr = $sipprofile_data;
-	 
-// 	  if($sipprofile_data['name'] == '' || $sipprofile_data['sip_ip'] =='' || $sipprofile_data['sip_port'] =='')
-// 	  {
-// 	      $this->session->set_flashdata('astpp_notification', 'Please enter All profile value!');
-// 	      redirect(base_url() . '/freeswitch/fssipprofile_edit/'.$sipprofile_data['id']);
-// 	      exit;
-// 	  }
-// 	  if(preg_match('/\s/',$sipprofile_data['name']))
-// 	  {
-// 	    $this->session->set_flashdata('astpp_notification', 'Sip Profile name must not have any space!');
-//  	    redirect(base_url() . 'freeswitch/fssipprofile_edit/'.$sipprofile_data['id']);
-//  	    exit;
-// 	  }
-// 	  if(!preg_match('/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\z/', $sipprofile_data['sip_ip']))
-// 	  {
-// 	    $this->session->set_flashdata('astpp_notification', 'Sip IP must be proper!');
-//  	    redirect(base_url() . 'freeswitch/fssipprofile_edit/'.$sipprofile_data['id']);
-//  	    exit;
-// 	  }
-	    
 	        if ($check_authentication->num_rows == 0) {
-		    $profile_name = $this->common->get_field_name('name', 'sip_profiles', $sipprofile_data['id']);
-                    $cmd = "api sofia profile '$profile_name' stop";
-		    $response= $this->freeswitch_model->reload_freeswitch($cmd,$sipprofile_data['sip_ip']);
-		    
-		    $command = "api reloadacl";
-		    $response= $this->freeswitch_model->reload_freeswitch($cmd,$sipprofile_data['sip_ip']);
-		    		    
                     $update = $this->db->update("sip_profiles", $insert_arr, array('id' => $sipprofile_data['id']));
-
-                      $this->session->set_flashdata('astpp_errormsg', $sipprofile_data['name']." SIP Profile Updated Successfully!");
-                      redirect(base_url() . 'freeswitch/fssipprofile/');   
-		      exit;
+                    $this->session->set_flashdata('astpp_errormsg', $sipprofile_data['name']." SIP Profile Updated Successfully!");
+                    redirect(base_url() . 'freeswitch/fssipprofile/');   
+                    exit;
                 } else {
                     $this->session->set_flashdata('astpp_notification', 'Duplicate SIP IP OR Port found it must be unique!');
 		    redirect(base_url() . 'freeswitch/fssipprofile/');

@@ -67,7 +67,7 @@ class Accounts_form {
         $form['Account Settings'] = array(
             array('Status', 'status', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_status'),
             array('Max Channels', 'INPUT', array('name' => 'maxchannels', 'size' => '20', 'maxlength' => '4', 'class' => "text field medium"), 'numeric', 'tOOL TIP', ''),
-            array('Number Translation', 'INPUT', array('name' => 'dialed_modify', 'size' => '20', 'maxlength' => '200', 'class' => "text field medium"), 'numeric', 'tOOL TIP', ''),
+            array('Number Translation', 'INPUT', array('name' => 'dialed_modify', 'size' => '20', 'maxlength' => '200', 'class' => "text field medium"), '', 'tOOL TIP', ''),
              array('First Used', 'INPUT', array('name' => 'first_used', 'size' => '20', 'readonly' => true, 'maxlength' => '200', 'class' => "text field medium",'value'=>'0000-00-00 00:00:00'), '', 'tOOL TIP', ''),
             array('Expiry Date', 'INPUT', array('name' => 'expiry', 'size' => '20', 'maxlength' => '200', 'class' => "text field medium",'value'=>$expiry_date,'id'=>'expiry'), '', 'tOOL TIP', ''),
             array('Valid Days', 'INPUT', array('name' => 'validfordays', 'size' => '20', 'maxlength' => '7', 'class' => "text field medium"), 'trim|numeric|min_length[1]|max_length[4]|xss_clean', 'tOOL TIP', ''),  
@@ -79,8 +79,8 @@ class Accounts_form {
           //  array('Language', 'language_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'languagename', 'language', 'build_dropdown', '', ''),
 
             array('First Name', 'INPUT', array('name' => 'first_name', 'id' => 'first_name', 'size' => '15', 'maxlength' => '40', 'class' => "text field medium"), 'required|alpha_numeric', 'tOOL TIP', ''),
-            array('Last Name', 'INPUT', array('name' => 'last_name', 'size' => '15', 'maxlength' => '40', 'class' => "text field medium"), 'alpha_numeric', 'tOOL TIP', ''),
-            array('Company', 'INPUT', array('name' => 'company_name', 'maxlength' => '40', 'size' => '15', 'class' => 'text field medium'), 'alpha_numeric_space', 'tOOL TIP', ''),
+            array('Last Name', 'INPUT', array('name' => 'last_name', 'size' => '15', 'maxlength' => '40', 'class' => "text field medium"), 'trim|alpha_dash|xss_clean', 'tOOL TIP', ''),
+            array('Company', 'INPUT', array('name' => 'company_name', 'maxlength' => '40', 'size' => '15', 'class' => 'text field medium'), 'trim|alpha_numeric_space|xss_clean', 'tOOL TIP', ''),
             array('Telephone 1', 'INPUT', array('name' => 'telephone_1', 'size' => '15', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', ''),
             array('Telephone 2', 'INPUT', array('name' => 'telephone_2', 'size' => '15', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', ''),
             array('Email', 'INPUT', array('name' => 'email', 'size' => '50', 'maxlength' => '80', 'class' => "text field medium"), 'required|valid_email|is_unique['.$val.']', 'tOOL TIP', ''),
@@ -88,18 +88,18 @@ class Accounts_form {
             array('Address 2', 'INPUT', array('name' => 'address_2', 'size' => '15', 'maxlength' => '80', 'class' => "text field medium"), '', 'tOOL TIP', ''),
             array('City', 'INPUT', array('name' => 'city', 'size' => '20', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', 'alpha'),
             array('Province/State', 'INPUT', array('name' => 'province', 'size' => '15', 'maxlength' => '20', 'class' => "text field medium"), 'alpha', 'tOOL TIP', ''),
-            array('Zip/Postal Code', 'INPUT', array('name' => 'postal_code', 'size' => '15', 'maxlength' => '12', 'class' => "text field medium"), 'alpha_numeric', 'tOOL TIP', ''),
-            array('Country', 'country_id', 'SELECT', '',array("name"=>"country_id","rules"=>"required"), 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
-            array('Timezone', 'timezone_id', 'SELECT', '', array("name"=>"timezone_id","rules"=>"required"), 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', '')
+            array('Zip/Postal Code', 'INPUT', array('name' => 'postal_code', 'size' => '15', 'maxlength' => '12', 'class' => "text field medium"), 'trim|xss_clean', 'tOOL TIP', ''),
+            array('Country',array('name'=>'country_id','class'=>'country_id'), 'SELECT', '',array("name"=>"country_id","rules"=>"required"), 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
+            array('Timezone',array('name'=>'timezone_id','class'=>'timezone_id'), 'SELECT', '', array("name"=>"timezone_id","rules"=>"required"), 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', '')
         );
         $form['Billing Information'] = array(
             array('Rate Group', 'pricelist_id', 'SELECT', '',array("name"=>"pricelist_id","rules"=>"required"), 'tOOL TIP', 'Please Enter account number', 'id', 'name', 'pricelists', 'build_dropdown', 'where_arr', array("status" => "0","reseller_id" => $loginid)),
             array('Billing Schedule',array('name'=> 'sweep_id','class'=>'sweep_id','id'=>'sweep_id'), 'SELECT', '', '', 'tOOL TIP', '', 'id', 'sweep', 'sweeplist', 'build_dropdown', '', ''),
             array('Billing Day',array("name"=>'invoice_day',"class"=>"invoice_day"), 'SELECT', '', '', 'tOOL TIP', '', '', '', '', 'set_invoice_option'),
-            array('Currency', 'currency_id', 'SELECT', '',array("name"=>"currency_id","rules"=>"required"), 'tOOL TIP', 'Please Enter account number', 'id', 'currencyname,currency', 'currency', 'build_concat_dropdown', '', array()),
+            array('Currency',array('name'=>'currency_id','class'=>'currency_id'), 'SELECT', '',array("name"=>"currency_id","rules"=>"required"), 'tOOL TIP', 'Please Enter account number', 'id', 'currencyname,currency', 'currency', 'build_concat_dropdown', '', array()),
             array('Account Type',array('name' => 'posttoexternal', 'disabled' => $readable,'class' => 'posttoexternal', 'id' => 'posttoexternal'), 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_account_type'),
             array('Credit Limit', 'INPUT', array('name' => 'credit_limit', 'size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'valid_decimal', 'tOOL TIP', ''),
-	      array('Tax','tax_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'taxes_description', 'taxes', 'build_dropdown', 'where_arr',array('status'=>0), 'multi'),
+	      array('Tax','tax_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'taxes_description', 'taxes', 'build_dropdown', 'where_arr',array('status'=>0,"reseller_id" => $loginid), 'multi'),
             );
             
 
@@ -136,15 +136,15 @@ class Accounts_form {
             array('Start prefix', 'INPUT', array('name' => 'prefix', 'size' => '20', 'maxlength' => '3', 'class' => "text field medium"), 'trim|required|min_length[1]|numeric|max_length[3]|xss_clean', 'tOOL TIP', ''), 
             array('Account Length', 'INPUT', array('name' => 'account_length', 'size' => '20', 'maxlength' => '2', 'class' => "text field medium"), 'trim|required|min_length[1]|max_length[2]|numeric|xss_clean', 'tOOL TIP', ''), 
             array('Company', 'INPUT', array('name' => 'company_name', 'maxlength' => '40', 'size' => '15', 'class' => 'text field medium'), 'trim|required|alpha_numeric_space|xss_clean', 'tOOL TIP', ''),
-            array('Country', 'country_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
-            array('Timezone', 'timezone_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', ''),
+             array('Country',array('name'=>'country_id','class'=>'country_id'), 'SELECT', '',array("name"=>"country_id","rules"=>"required"), 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
+            array('Timezone',array('name'=>'timezone_id','class'=>'timezone_id'), 'SELECT', '', array("name"=>"timezone_id","rules"=>"required"), 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', ''),
             array('Pin', 'pin', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_allow'),
 	    $sip_device,
 	    $opensips_device
         );
         $form['Profile Details'] = array(
             array('Rate Group',array('name'=>'pricelist_id','class'=>'pricelist_id'), 'SELECT', '',"required", 'tOOL TIP', 'Please Enter account number', 'id', 'name', 'pricelists', 'build_dropdown', 'where_arr', array("status" => "0","reseller_id" => $loginid)),
-            array('Currency',  array('name'=>'currency_id','value'=>'139','class'=>''), 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'currencyname,currency', 'currency', 'build_concat_dropdown', '', array()),
+            array('Currency',array('name'=>'currency_id','class'=>'currency_id'), 'SELECT', '',array("name"=>"currency_id","rules"=>"required"), 'tOOL TIP', 'Please Enter account number', 'id', 'currencyname,currency', 'currency', 'build_concat_dropdown', '', array()),
             array('Balance', 'INPUT', array('name' => 'balance', 'size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|currency_decimal|xss_clean', 'tOOL TIP', ''),
             array('Credit Limit', 'INPUT', array('name' => 'credit_limit', 'size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|currency_decimal|xss_clean', 'tOOL TIP', ''),
             array('Account Type', 'posttoexternal', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_account_type'),
@@ -209,19 +209,19 @@ class Accounts_form {
             array('Rate Group', 'pricelist_id', 'SELECT', '',array("name"=>"pricelist_id",'rules'=>'required'), 'tOOL TIP', 'Please Enter account number', 'id', 'name', 'pricelists', 'build_dropdown', 'where_arr', array("status" => "0","reseller_id" => "0")),
             array('Billing Schedule',array('name'=> 'sweep_id','class'=>'sweep_id'), 'SELECT', '', '', 'tOOL TIP', '', 'id', 'sweep', 'sweeplist', 'build_dropdown', '', ''),
             array('Billing Day',array("name"=>'invoice_day',"class"=>"invoice_day"), 'SELECT', '', '', 'tOOL TIP', '', '', '', '', 'set_invoice_option'),
-             array('Currency', 'currency_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'currencyname,currency', 'currency', 'build_concat_dropdown', '', array()),
+             array('Currency',array('name'=>'currency_id','class'=>'currency_id'), 'SELECT', '',array("name"=>"currency_id","rules"=>"required"), 'tOOL TIP', 'Please Enter account number', 'id', 'currencyname,currency', 'currency', 'build_concat_dropdown', '', array()),
             
             array('Commission Rate in (%)', 'INPUT', array('name' => 'commission_rate', 'size' => '20', 'maxlength' => '11', 'class' => "text field medium"), '', 'tOOL TIP', ''),
             array('Account Type',array('name' => 'posttoexternal', 'disabled' => $readable,'class' => 'posttoexternal', 'id' => 'posttoexternal'), 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_account_type'),
-		array('Credit Limit', 'INPUT', array('name' => 'credit_limit', 'size' => '20', 'maxlength' => '15', 'class' => "text field medium"), '', 'tOOL TIP', ''),
-	    array('Tax','tax_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'taxes_description', 'taxes', 'build_dropdown', 'where_arr',array('status'=>0), 'multi'),
+	    array('Credit Limit', 'INPUT', array('name' => 'credit_limit', 'size' => '20', 'maxlength' => '15', 'class' => "text field medium"), '', 'tOOL TIP', ''),
+	    array('Tax','tax_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'taxes_description', 'taxes', 'build_dropdown', 'where_arr',array('status'=>0,'reseller_id'=>$loginid), 'multi'),
 	  );
 
         $form['Reseller Profile'] = array(
          //   array('Language', 'language_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'languagename', 'language', 'build_dropdown', '', ''),
            
-            array('First Name', 'INPUT', array('name' => 'first_name', 'id' => 'first_name', 'size' => '50', 'maxlength' => '40', 'class' => "text field medium"), 'trim|required|max_length[20]|xss_clean', 'tOOL TIP', ''),
-            array('Last Name', 'INPUT', array('name' => 'last_name', 'size' => '15', 'maxlength' => '40', 'class' => "text field medium"), '', 'tOOL TIP', ''),
+            array('First Name', 'INPUT', array('name' => 'first_name', 'id' => 'first_name', 'size' => '50', 'maxlength' => '40', 'class' => "text field medium"), 'trim|required|max_length[20]|alpha_numeric|xss_clean', 'tOOL TIP', ''),
+            array('Last Name', 'INPUT', array('name' => 'last_name', 'size' => '15', 'maxlength' => '40', 'class' => "text field medium"), 'trim|alpha_dash|xss_clean', 'tOOL TIP', ''),
 	    array('Company', 'INPUT', array('name' => 'company_name', 'maxlength' => '40', 'size' => '50', 'class' => 'text field medium'), 'trim|alpha_numeric_space|xss_clean', 'tOOL TIP', ''),
             array('Telephone 1', 'INPUT', array('name' => 'telephone_1', 'size' => '15', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', ''),
             array('Telephone 2', 'INPUT', array('name' => 'telephone_2', 'size' => '15', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', ''),
@@ -230,9 +230,9 @@ class Accounts_form {
             array('Address 2', 'INPUT', array('name' => 'address_2', 'size' => '15', 'maxlength' => '100', 'class' => "text field medium"), '', 'tOOL TIP', ''),
             array('City', 'INPUT', array('name' => 'city', 'size' => '20', 'maxlength' => '25', 'class' => "text field medium"), '', 'tOOL TIP', ''),
             array('Province/State', 'INPUT', array('name' => 'province', 'size' => '15', 'maxlength' => '25', 'class' => "text field medium"), '', 'tOOL TIP', ''),
-            array('Zip/Postal Code', 'INPUT', array('name' => 'postal_code', 'size' => '15', 'maxlength' => '15', 'class' => "text field medium"), '', 'tOOL TIP', ''),
-            array('Country', 'country_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
-            array('Timezone', 'timezone_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', ''),
+            array('Zip/Postal Code', 'INPUT', array('name' => 'postal_code', 'size' => '15', 'maxlength' => '15', 'class' => "text field medium"), 'trim|xss_clean', 'tOOL TIP', ''),
+             array('Country',array('name'=>'country_id','class'=>'country_id'), 'SELECT', '',array("name"=>"country_id","rules"=>"required"), 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
+            array('Timezone',array('name'=>'timezone_id','class'=>'timezone_id'), 'SELECT', '', array("name"=>"timezone_id","rules"=>"required"), 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', ''),
             array('Account Status', 'status', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_status'),
         );
         $form['Low Balance Alert Email'] = array(
@@ -260,15 +260,15 @@ class Accounts_form {
             array('Account Status', 'status', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_status'),
             array('Billing Schedule',array('name'=> 'sweep_id','class'=>'sweep_id'), 'SELECT', '', '', 'tOOL TIP', '', 'id', 'sweep', 'sweeplist', 'build_dropdown', '', ''),
             array('Billing Day',array("name"=>'invoice_day',"class"=>"invoice_day"), 'SELECT', '', '', 'tOOL TIP', '', '', '', '', 'set_invoice_option'),
-            array('Currency', 'currency_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'currencyname,currency', 'currency', 'build_concat_dropdown', '', array()),
+            array('Currency',array('name'=>'currency_id','class'=>'currency_id'), 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'currencyname,currency', 'currency', 'build_concat_dropdown', '', array()),
             array('Tax','tax_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'taxes_description', 'taxes', 'build_dropdown',  'where_arr',array('status'=>0), 'multi'),
         );
 
         $form['Provider Profile'] = array(
           //  array('Language', 'language_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'languagename', 'language', 'build_dropdown', '', ''),
             
-            array('First Name', 'INPUT', array('name' => 'first_name', 'id' => 'first_name', 'size' => '25', 'maxlength' => '50', 'class' => "text field medium"), 'trim|required|max_length[20]|xss_clean', 'tOOL TIP', ''),
-            array('Last Name', 'INPUT', array('name' => 'last_name', 'size' => '15', 'maxlength' => '50', 'class' => "text field medium"), '', 'tOOL TIP', ''),
+            array('First Name', 'INPUT', array('name' => 'first_name', 'id' => 'first_name', 'size' => '25', 'maxlength' => '50', 'class' => "text field medium"), 'trim|required|max_length[20]|alpha_numeric|xss_clean', 'tOOL TIP', ''),
+            array('Last Name', 'INPUT', array('name' => 'last_name', 'size' => '15', 'maxlength' => '50', 'class' => "text field medium"), 'trim|alpha_dash|xss_clean', 'tOOL TIP', ''),
 	    array('Company', 'INPUT', array('name' => 'company_name', 'maxlength' => '150', 'size' => '50', 'class' => 'text field medium'), 'trim|alpha_numeric_space|xss_clean', 'tOOL TIP', ''),
             array('Telephone 1', 'INPUT', array('name' => 'telephone_1', 'size' => '15', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', ''),
             array('Telephone 2', 'INPUT', array('name' => 'telephone_2', 'size' => '15', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', ''),
@@ -277,9 +277,9 @@ class Accounts_form {
             array('Address 2', 'INPUT', array('name' => 'address_2', 'size' => '15', 'maxlength' => '100', 'class' => "text field medium"), '', 'tOOL TIP', ''),
             array('City', 'INPUT', array('name' => 'city', 'size' => '20', 'maxlength' => '25', 'class' => "text field medium"), '', 'tOOL TIP', ''),
             array('Province/State', 'INPUT', array('name' => 'province', 'size' => '15', 'maxlength' => '25', 'class' => "text field medium"), '', 'tOOL TIP', ''),
-            array('Zip/Postal Code', 'INPUT', array('name' => 'postal_code', 'size' => '15', 'maxlength' => '15', 'class' => "text field medium"), '', 'tOOL TIP', ''),
-            array('Country', 'country_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
-            array('Timezone', 'timezone_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', '')
+            array('Zip/Postal Code', 'INPUT', array('name' => 'postal_code', 'size' => '15', 'maxlength' => '15', 'class' => "text field medium"), 'trim|xss_clean', 'tOOL TIP', ''),
+             array('Country',array('name'=>'country_id','class'=>'country_id'), 'SELECT', '',array("name"=>"country_id","rules"=>"required"), 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
+            array('Timezone',array('name'=>'timezone_id','class'=>'timezone_id'), 'SELECT', '', array("name"=>"timezone_id","rules"=>"required"), 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', ''),
         );
 
         $form['button_cancel'] = array('name' => 'action', 'content' => 'Cancel', 'value' => 'cancel', 'type' => 'button', 'class' => 'btn btn-line-sky margin-x-10', 'onclick' => 'return redirect_page(\'/accounts/customer_list/\')');
@@ -305,7 +305,7 @@ class Accounts_form {
          //   array('Language', 'language_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'languagename', 'language', 'build_dropdown', '', ''),
             array('Company', 'INPUT', array('name' => 'company_name', 'maxlength' => '150', 'size' => '15', 'class' => 'text field medium'), 'trim|alpha_numeric_space|xss_clean', 'tOOL TIP', ''),
             array('First Name', 'INPUT', array('name' => 'first_name', 'id' => 'first_name', 'size' => '15', 'maxlength' => '50', 'class' => "text field medium"), 'trim|required|max_length[20]|xss_clean', 'tOOL TIP', 'Please Enter account number'),
-            array('Last Name', 'INPUT', array('name' => 'last_name', 'size' => '15', 'maxlength' => '50', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
+            array('Last Name', 'INPUT', array('name' => 'last_name', 'size' => '15', 'maxlength' => '50', 'class' => "text field medium"), 'trim|alpha_dash|xss_clean', 'tOOL TIP', 'Please Enter Password'),
             array('Telephone 1', 'INPUT', array('name' => 'telephone_1', 'size' => '15', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
             array('Telephone 2', 'INPUT', array('name' => 'telephone_2', 'size' => '15', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
             array('Email', 'INPUT', array('name' => 'email', 'size' => '50', 'maxlength' => '100', 'class' => "text field medium"), 'required|valid_email|is_unique['.$val.']', 'tOOL TIP', 'Please Enter Password'),
@@ -313,9 +313,9 @@ class Accounts_form {
             array('Address 2', 'INPUT', array('name' => 'address_2', 'size' => '15', 'maxlength' => '100', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
             array('City', 'INPUT', array('name' => 'city', 'size' => '20', 'maxlength' => '25', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
             array('Province/State', 'INPUT', array('name' => 'province', 'size' => '15', 'maxlength' => '25', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
-            array('Zip/Postal Code', 'INPUT', array('name' => 'postal_code', 'size' => '15', 'maxlength' => '15', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
-            array('Country', 'country_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
-            array('Timezone', 'timezone_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', '')
+            array('Zip/Postal Code', 'INPUT', array('name' => 'postal_code', 'size' => '15', 'maxlength' => '15', 'class' => "text field medium"), 'trim|xss_clean', 'tOOL TIP', 'Please Enter Password'),
+            array('Country',array('name'=>'country_id','class'=>'country_id'), 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
+            array('Timezone',array('name'=>'timezone_id','class'=>'timezone_id'), 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', '')
         );
         $form['Low Balance Alert Email'] = array(
             array('Low Balance Alert Level', 'INPUT', array('name' => 'notify_credit_limit', 'size' => '20', 'maxlength' => '15', 'class' => "text field medium"), '', 'tOOL TIP', ''),
@@ -341,8 +341,8 @@ class Accounts_form {
             array('Password', 'PASSWORD', array('name' => 'password', 'size' => '20', 'maxlength' => '20', 'class' => "text field medium"), 'trim|required|min_length[5]|max_length[20]|xss_clean', 'tOOL TIP', 'Please Enter Password'),
         //    array('Language', 'language_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'languagename', 'language', 'build_dropdown', '', ''),
             array('Company', 'INPUT', array('name' => 'company_name', 'maxlength' => '150', 'size' => '15', 'class' => 'text field medium'), 'trim|alpha_numeric_space|xss_clean', 'tOOL TIP', ''),
-            array('First Name', 'INPUT', array('name' => 'first_name', 'id' => 'first_name', 'size' => '15', 'maxlength' => '50', 'class' => "text field medium"), 'trim|required|max_length[20]|xss_clean', 'tOOL TIP', 'Please Enter account number'),
-            array('Last Name', 'INPUT', array('name' => 'last_name', 'size' => '15', 'maxlength' => '50', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
+            array('First Name', 'INPUT', array('name' => 'first_name', 'id' => 'first_name', 'size' => '15', 'maxlength' => '50', 'class' => "text field medium"), 'trim|required|max_length[20]|alpha_numeric|xss_clean', 'tOOL TIP', 'Please Enter account number'),
+            array('Last Name', 'INPUT', array('name' => 'last_name', 'size' => '15', 'maxlength' => '50', 'class' => "text field medium"), 'trim|alpha_dash|xss_clean', 'tOOL TIP', 'Please Enter Password'),
             array('Telephone 1', 'INPUT', array('name' => 'telephone_1', 'size' => '15', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
             array('Telephone 2', 'INPUT', array('name' => 'telephone_2', 'size' => '15', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
             array('Email', 'INPUT', array('name' => 'email', 'size' => '50', 'maxlength' => '100', 'class' => "text field medium"), 'required|valid_email', 'tOOL TIP', 'Please Enter Password'),
@@ -350,9 +350,9 @@ class Accounts_form {
             array('Address 2', 'INPUT', array('name' => 'address_2', 'size' => '15', 'maxlength' => '100', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
             array('City', 'INPUT', array('name' => 'city', 'size' => '20', 'maxlength' => '25', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
             array('Province/State', 'INPUT', array('name' => 'province', 'size' => '15', 'maxlength' => '25', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
-            array('Zip/Postal Code', 'INPUT', array('name' => 'postal_code', 'size' => '15', 'maxlength' => '15', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
-            array('Country', 'country_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
-            array('Timezone', 'timezone_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', '')
+            array('Zip/Postal Code', 'INPUT', array('name' => 'postal_code', 'size' => '15', 'maxlength' => '15', 'class' => "text field medium"), 'trim|xss_clean', 'tOOL TIP', 'Please Enter Password'),
+            array('Country',array('name'=>'country_id','class'=>'country_id'), 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
+            array('Timezone', array('name'=>'timezone_id','class'=>'timezone_id'), 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', '')
         );
         $form['Low Balance Alert Email'] = array(
             array('Low Balance Alert Level', 'INPUT', array('name' => 'notify_credit_limit', 'size' => '20', 'maxlength' => '15', 'class' => "text field medium"), '', 'tOOL TIP', ''),
@@ -380,8 +380,8 @@ class Accounts_form {
         $form[$entity_type.' Profile'] = array(
           //  array('Language', 'language_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'languagename', 'language', 'build_dropdown', '', ''),
             
-            array('First Name', 'INPUT', array('name' => 'first_name', 'id' => 'first_name', 'size' => '15', 'maxlength' => '40', 'class' => "text field medium"), 'trim|required|max_length[20]|xss_clean', 'tOOL TIP', 'Please Enter account number'),
-            array('Last Name', 'INPUT', array('name' => 'last_name', 'size' => '15', 'maxlength' => '40', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
+            array('First Name', 'INPUT', array('name' => 'first_name', 'id' => 'first_name', 'size' => '15', 'maxlength' => '40', 'class' => "text field medium"), 'trim|required|max_length[20]|alpha_numeric|xss_clean', 'tOOL TIP', 'Please Enter account number'),
+            array('Last Name', 'INPUT', array('name' => 'last_name', 'size' => '15', 'maxlength' => '40', 'class' => "text field medium"), 'trim|alpha_dash|xss_clean', 'tOOL TIP', 'Please Enter Password'),
 	    array('Company', 'INPUT', array('name' => 'company_name', 'maxlength' => '40', 'size' => '15', 'class' => 'text field medium'), 'trim|xss_clean', 'tOOL TIP', ''),
             array('Telephone 1', 'INPUT', array('name' => 'telephone_1', 'size' => '15', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
             array('Telephone 2', 'INPUT', array('name' => 'telephone_2', 'size' => '15', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
@@ -390,11 +390,11 @@ class Accounts_form {
             array('Address 2', 'INPUT', array('name' => 'address_2', 'size' => '15', 'maxlength' => '80', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
             array('City', 'INPUT', array('name' => 'city', 'size' => '20', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
             array('Province/State', 'INPUT', array('name' => 'province', 'size' => '15', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
-            array('Zip/Postal Code', 'INPUT', array('name' => 'postal_code', 'size' => '15', 'maxlength' => '12', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
-            array('Country', 'country_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
-            array('Timezone', 'timezone_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', ''),
+            array('Zip/Postal Code', 'INPUT', array('name' => 'postal_code', 'size' => '15', 'maxlength' => '12', 'class' => "text field medium"), 'trim|xss_clean', 'tOOL TIP', 'Please Enter Password'),
+            array('Country', array('name'=>'country_id','class'=>'country_id'), 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
+            array('Timezone',array('name'=> 'timezone_id','class'=>'timezone_id'), 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', ''),
             array('Account Status', 'status', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_status'),
-             array('Currency', 'currency_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'currencyname,currency', 'currency', 'build_concat_dropdown', '', array()),
+             array('Currency',array('name'=>'currency_id','class'=>'currency_id'), 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'currencyname,currency', 'currency', 'build_concat_dropdown', '', array()),
 //             array('Tax','tax_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'taxes_description', 'taxes', 'build_dropdown', 'where_arr',array('status'=>0), 'multi'),
         );
 
@@ -415,8 +415,8 @@ class Accounts_form {
         $form['Subadmin Profile'] = array(
           //  array('Language', 'language_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'languagename', 'language', 'build_dropdown', '', ''),
             
-            array('First Name', 'INPUT', array('name' => 'first_name', 'id' => 'first_name', 'size' => '25', 'maxlength' => '40', 'class' => "text field medium"), 'trim|required|max_length[20]|xss_clean', 'tOOL TIP', 'Please Enter account number'),
-            array('Last Name', 'INPUT', array('name' => 'last_name', 'size' => '15', 'maxlength' => '40', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
+            array('First Name', 'INPUT', array('name' => 'first_name', 'id' => 'first_name', 'size' => '25', 'maxlength' => '40', 'class' => "text field medium"), 'trim|required|max_length[20]|alpha_numeric|xss_clean', 'tOOL TIP', 'Please Enter account number'),
+            array('Last Name', 'INPUT', array('name' => 'last_name', 'size' => '15', 'maxlength' => '40', 'class' => "text field medium"), 'trim|alpha_dash|xss_clean', 'tOOL TIP', 'Please Enter Password'),
 	    array('Company', 'INPUT', array('name' => 'company_name', 'maxlength' => '40', 'size' => '15', 'class' => 'text field medium'), 'trim|alpha_numeric_space|xss_clean', 'tOOL TIP', ''),
             array('Telephone 1', 'INPUT', array('name' => 'telephone_1', 'size' => '15', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
             array('Telephone 2', 'INPUT', array('name' => 'telephone_2', 'size' => '15', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
@@ -425,9 +425,9 @@ class Accounts_form {
             array('Address 2', 'INPUT', array('name' => 'address_2', 'size' => '15', 'maxlength' => '80', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
             array('City', 'INPUT', array('name' => 'city', 'size' => '20', 'maxlength' => '20', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
             array('Province/State', 'INPUT', array('name' => 'province', 'size' => '15', 'maxlength' => '35', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
-            array('Zip/Postal Code', 'INPUT', array('name' => 'postal_code', 'size' => '15', 'maxlength' => '12', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter Password'),
-            array('Country', 'country_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
-            array('Timezone', 'timezone_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', ''),
+            array('Zip/Postal Code', 'INPUT', array('name' => 'postal_code', 'size' => '15', 'maxlength' => '12', 'class' => "text field medium"), 'trim|xss_clean', 'tOOL TIP', 'Please Enter Password'),
+            array('Country', array('name'=>'country_id','class'=>'country_id'), 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'country', 'countrycode', 'build_dropdown', '', ''),
+            array('Timezone',array('name'=> 'timezone_id','class'=>'timezone_id'), 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'gmtzone', 'timezone', 'build_dropdown', '', ''),
             array('Account Status', 'status', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_status'),
             array('Currency', 'currency_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'currencyname,currency', 'currency', 'build_concat_dropdown', '', array()),
             array('Tax','tax_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'taxes_description', 'taxes', 'build_dropdown','where_arr',array('status'=>0), 'multi'),

@@ -151,7 +151,7 @@ sub number_translation()
         &logger("Grab :$grab Replacement: $replace Phone Before: $arg{destination_number}");
 
 	    my $number_prefix = substr($arg{destination_number},0,length($grab));
-        if ($number_prefix == $grab)
+        if ($number_prefix eq $grab)
         {
              $arg{destination_number} = $replace.substr($arg{destination_number},length($grab));
         }

@@ -175,9 +175,14 @@ ask_to_install_astpp () {
 	if [ ${TEMP_USER_ANSWER} = "yes" ]; then
 		  INSTALL_ASTPP="yes"
 		  echo ""
-		  read -p "Enter fqdn example: ${ASTPP_HOST_DOMAIN_NAME}: "
+		  read -p "Enter FQDN example (i.e ${ASTPP_HOST_DOMAIN_NAME}): "
 		  ASTPP_HOST_DOMAIN_NAME=${REPLY}
-		  echo "Your entered data as fqdm : ${ASTPP_HOST_DOMAIN_NAME}"
+		  echo "Your entered FQDN is : ${ASTPP_HOST_DOMAIN_NAME} "
+		  echo ""
+
+		  read -p "Enter your email address: ${EMAIL}"
+		  EMAIL=${REPLY}
+
 		  read -n 1 -p "Press any key to continue ... "
 		  
 		  ask_to_user_yes_or_no "Do you want use FreeSwitch on ASTPP?"
@@ -207,12 +212,14 @@ ask_to_install_astpp
 #################################
 
 clear
-if [ ${UPGRADE_ASTPP} = "yes" ]; then
-    echo -e "upgradation starting"
+
+if [ "${UPGRADE_ASTPP}" = "yes" ]; then
+    echo "Starting upgradation !"
 else
-    echo -e "installation starting"
-fi    
-echo -e "are you ready?"
+    echo "Starting installation !"
+fi 
+   
+echo -e "Are you ready?"
 read -n 1 -p "Press any key to continue ... "
 clear
 
@@ -237,13 +244,15 @@ install_freeswitch_for_astpp () {
 
 	yum install -y git
 	
-	yum clean all
+	#yum clean all
 
 	# Install Freeswitch pre-requisite packages using YUM
-	yum  install -y autoconf automake  expat-devel gnutls-devel libtiff-devel libX11-devel unixODBC-devel python-devel zlib-devel alsa-lib-devel libogg-devel libvorbis-devel perl perl-libs uuid-devel @development-tools gdbm-devel db4-devel libjpeg libjpeg-devel compat-libtermcap ncurses ncurses-devel ntp screen sendmail sendmail-cf gcc-c++ libtool cpan @development-tools bison bzip2 curl curl-devel dmidecode git make mysql-connector-odbc openssl-devel unixODBC zlib pcre-devel speex-devel sqlite-devel ldns-devel libedit-devel
+	yum  install -y autoconf automake  expat-devel gnutls-devel libtiff-devel libX11-devel unixODBC-devel python-devel zlib-devel alsa-lib-devel libogg-devel libvorbis-devel perl perl-libs uuid-devel @development-tools gdbm-devel db4-devel libjpeg libjpeg-devel compat-libtermcap ncurses ncurses-devel ntp screen sendmail sendmail-cf gcc-c++ libtool cpan @development-tools bison bzip2 curl curl-devel dmidecode git make mysql-connector-odbc openssl-devel unixODBC zlib pcre-devel speex-devel sqlite-devel ldns-devel libedit-devel perl-ExtUtils-Embed 
 
     fi  
-    
+
+    curl --data "email=$EMAIL" http://demo.astpp.org/lib/
+ 
     echo "Lets first make sure that time is correct before we continue ... "
     # set right time
     set_right_time () {
@@ -411,7 +420,8 @@ install_astpp () {
 	if [ ${INSTALL_ASTPP_PERL_PACKAGES} = "yes" ]; then
 		perl -MCPAN -e 'my $c = "CPAN::HandleConfig"; $c->load(doit => 1, autoconfig => 1); $c->edit(prerequisites_policy => "follow"); $c->edit(build_requires_install_policy => "yes"); $c->commit'
 
-		perl -MCPAN -e "install XML::Simple,Data::Dumper,URI::Escape,JSON,POSIX,DBI,Time::HiRes,DateTime::Format::Strptime,XML::Simple,CGI";
+		perl -MCPAN -e "install Data::Dumper,URI::Escape,JSON,POSIX,DBI,Time::HiRes,DateTime::Format::Strptime,XML::Simple,CGI";
+		
 	fi
 	
 	if [ ${ASTPP_USING_FREESWITCH} = "yes" ]; then
@@ -541,18 +551,14 @@ install_fail2ban(){
 
 	read -n 1 -p "Do you want to install and configure Fail2ban ? (y/n) "
 	if [ $REPLY   = "y" ]; then
-
-		echo ""
-		echo "################################################################"
-		echo "What is your personal email address for notification ?"
-		read -e EMAIL
-		echo "################################################################"
+		
 		if [ -f /etc/debian_version ] ; then
 			DIST="DEBIAN"
 			apt-get -y install fail2ban
 
 		elif [ -f /etc/redhat-release ] ; then
 			DIST="CENTOS"
+			echo ""
 			echo "Downloading sources"
 				cd /usr/src
 				service iptables stop
@@ -639,8 +645,8 @@ maxretry = 10
 bantime = 10000000
 findtime = 480
 action = iptables-allports[name=freeswitch, protocol=all]
-sendmail-whois[name=FreeSwitch, dest=$EMAIL, sender=fail2ban@example.org]
-" >> /etc/fail2ban/jail.conf
+sendmail-whois[name=FreeSwitch, dest=$EMAIL, sender=fail2ban@${ASTPP_HOST_DOMAIN_NAME}]
+" >> /etc/fail2ban/jail.local
 		echo "
 [freeswitch-dos]
 enabled = true
@@ -682,7 +688,7 @@ bantime = 6000
 				
 	else
 		echo ""
-		echo "Exiting from installation"
+		echo "Fail2ban installation is aborted !"
 	fi   
 }
 
@@ -702,12 +708,15 @@ astpp_install () {
 	startup_services	
 
 	clear
-	echo " you can login on "
+	echo "---------------------"
+	echo "| Login information |"
+	echo "---------------------"
 	echo "http://${ASTPP_HOST_DOMAIN_NAME}:8081 "
 	echo "Username= admin "
 	echo "Password= admin "
+	echo ""
 
-	sleep 10
+	sleep 5
 	echo ""	
 	install_fail2ban
 }
