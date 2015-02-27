@@ -68,8 +68,8 @@ sub auth_callingcard()
 	        my $authenticated = 0;
 	        while ( !$authenticated && $retries < $gbl_config->{card_retries} ) {
                 $cardnum = $session->playAndGetDigits(
-        	        $gbl_config->{cardlength},
-        	        $gbl_config->{cardlength},
+        	        1,
+        	        15,
         	        1,
         	        $gbl_config->{calling_cards_number_input_timeout},
         	        "#",
@@ -105,8 +105,8 @@ sub auth_callingcard()
 	      my $authenticated = 0;
           while ( !$authenticated && $retries < $gbl_config->{pin_retries} ) {
               my $pin_number = $session->playAndGetDigits(
-                  $gbl_config->{cardlength},
-       	          $gbl_config->{cardlength},
+                  1,
+       	          15,
        	          1,
     	          $gbl_config->{calling_cards_pin_input_timeout},
 	              "#",
