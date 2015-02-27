@@ -50,7 +50,7 @@ class Currencyupdate extends CI_Controller {
 	    	    {
 	    	        $currency_final = array();
 	    		    $currency_final= explode(',', $final_val);
-	    		    if($currency_final[1] != "" && $currency_final[0]!='')
+	    		    if(isset($currency_final[1]) && $currency_final[1] != "" && $currency_final[0]!='')
 	    		    {
     	    		    $sql = "UPDATE currency SET currencyRate = ".$currency_final[1]." WHERE currency = '".substr($currency_final[0],4,3)."'";
     	    		    $this->db->query($sql);

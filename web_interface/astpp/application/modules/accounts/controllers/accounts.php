@@ -1439,9 +1439,12 @@ function reseller_export_cdr_xls() {
     }
 
     function reseller_delete($id) {
-        
-        $this->accounts_model->remove_customer($id);
-        $this->free_reseller_did($id);
+        $reseller_ids=$this->common->subreseller_list($id);
+        $where= "reseller_id IN ($reseller_ids)";
+        $data=array('deleted'=>1);
+        $this->db->where($where);
+        $this->db->update('accounts',$data);
+        $this->free_reseller_did($reseller_ids);
         $this->session->set_flashdata('astpp_notification', 'Reseller removed successfully!');
         redirect(base_url() . 'accounts/reseller_list/');
     }
@@ -1457,22 +1460,18 @@ function reseller_export_cdr_xls() {
 	  $this->db->delete('ani_map');
 	  return true;
     }
-    function free_reseller_did($reseller_id)
+    function free_reseller_did($ids)
     {
-    
-      $parent_resid =$this->common->get_field_name('reseller_id','reseller_pricing',array('parent_id'=>$reseller_id));
-      if($parent_resid)
-      {
-	  $this->db->where(array("parent_id"=>$parent_resid));
-	  $this->db->update("dids",array('accountid' => "0","parent_id"=>0));
-      }
-      
-      $this->db->where(array("parent_id"=>$reseller_id));
-      $this->db->update("dids",array('accountid' => "0","parent_id"=>0));
-      
-      $this->db->delete("reseller_pricing",array("reseller_id"=>$reseller_id));
-      $this->db->delete("reseller_pricing",array("parent_id"=>$reseller_id));
-      return true;
+     $accountinfo=$this->session->userdata('accountinfo');
+     $reseller_id= $accountinfo['type'] != 1 ? 0 : $accountinfo['id'];
+     $data=array('parent_id'=>$reseller_id,'accountid'=>0);
+     $where="parent_id IN ($ids)";
+     $this->db->where($where);
+     $this->db->update('dids',$data);
+     $where = "reseller_id IN ($ids)";
+     $this->db->where($where);
+     $this->db->delete('reseller_pricing');
+     return true;
     }
     
     function provider_delete($id) {
@@ -2066,20 +2065,19 @@ function reseller_export_cdr_xls() {
         }
         $reseller_ids=rtrim($reseller_ids,',');
         $this->reseller_customer_multidelete($reseller_ids);
-        $this->free_reseller_multiple_dids($ids);
+        $this->free_reseller_multiple_dids($reseller_ids);
         echo TRUE;
     }
     
     function free_reseller_multiple_dids($ids){
-     $where = "parent_id IN ($ids)";
+
      $accountinfo=$this->session->userdata('accountinfo');
-     $reseller_id= $accountinfo['type'] == -1 ? 0 : $accountinfo['id'];
+     $reseller_id= $accountinfo['type'] != 1 ? 0 : $accountinfo['id'];
      $data=array('parent_id'=>$reseller_id,'accountid'=>0);
+     $where="parent_id IN ($ids)";
      $this->db->where($where);
      $this->db->update('dids',$data);
-     $this->db->where($where);
-     $this->db->delete('reseller_pricing');
-     $where="reseller_id IN ($ids)";
+     $where = "reseller_id IN ($ids)";
      $this->db->where($where);
      $this->db->delete('reseller_pricing');
      return true;

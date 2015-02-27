@@ -45,7 +45,7 @@ class GenerateInvoice extends MX_Controller {
                 case 0:
                         $this->Generate_Daily_invoice($account_value);
                 case 2:
-                      //  $this->Generate_Monthly_invoice($account_value);                     
+                        $this->Generate_Monthly_invoice($account_value);                     
                }
             }
         }

@@ -258,27 +258,17 @@ function insert_reseller_pricing($accountinfo, $post) {
     }
 
    function remove_did_pricing($array_did, $reseller_id) {
-        $where = array('note' => $array_did['number'], 'reseller_id' => $reseller_id);
+        $reseller_ids=$this->common->subreseller_list($reseller_id);
+        $where="note = ".$array_did['number']." AND reseller_id IN ($reseller_ids) OR  note= ".$array_did['number']." AND parent_id IN ($reseller_ids)";
         $this->db->where($where);
         $this->db->delete('reseller_pricing');
-
-        
-        $where_subresellerdid = array('note' => $array_did['number'], 'parent_id' => $reseller_id);
-        $this->db->where($where_subresellerdid);
-        $this->db->delete('reseller_pricing');
-        
-        
-        if($this->session->userdata["accountinfo"]['reseller_id'] == "0"){
-	  $update_array = array('accountid'=>"0",'parent_id'=>$this->session->userdata["accountinfo"]["reseller_id"]);
-	}else{
-	  $update_array = array('accountid'=>"0",'parent_id'=>0);
-	}
-        
+        $accountinfo=$this->session->userdata('accountinfo');
+        $reseller_id =$accountinfo['type'] != 1 ? 0 : $accountinfo['reseller_id'];
+	$update_array = array('accountid'=>"0",'parent_id'=>$reseller_id);
         $where_dids = array("number" => $array_did['number']);
+        $where_dids='number = '.$array_did['number']." AND parent_id IN ($reseller_ids)";
         $this->db->where($where_dids);
         $this->db->update('dids', $update_array);
-//         echo $this->db->last_query();exit;
-        
         return true;
     }
     function add_invoice_data($accountid,$charge_type,$description,$credit)

@@ -132,17 +132,9 @@ class DID extends MX_Controller {
         if($this->session->userdata['userlevel_logintype'] == '1')
  	{
 	    $drp_list = array();
-// 	    echo "<pre>";
-// 	    print_R($this->session->userdata["accountinfo"]);
-// 	    exit;
-	    if($this->session->userdata["accountinfo"]['reseller_id'] == 0 ){
-	      $where = array('accountid'=>"0",'parent_id'=>'0');
-	    }else{
-	      $where = array('accountid'=>"0",'parent_id'=>$this->session->userdata["accountinfo"]["reseller_id"]);
-	    }
-	    
-// 	    print_r($where);
-// 	    exit;
+	    $accountinfo=$this->session->userdata('accountinfo');
+	    $reseller_id=$accountinfo['type']!= 1 ? 0 : $accountinfo['reseller_id'];
+	    $where =array('parent_id'=>$reseller_id);
 	    $reseller_did = $this->db_model->getSelect( '*' ,'dids',$where);
 
 // 	    echo $this->db->last_query();exit;
@@ -283,7 +275,7 @@ class DID extends MX_Controller {
 	{
 	      $json_data = array();
 	      $where = array('dids.accountid' => $accountid);
-	      $jionCondition = 'dids.number = reseller_pricing.note';
+	      $jionCondition = 'dids.number = reseller_pricing.note AND dids.parent_id = reseller_pricing.reseller_id';
 	      $count_all = $this->db_model->getJionQueryCount("dids", '*', $where,"reseller_pricing",$jionCondition,'inner');
 	      $paging_data = $this->form->load_grid_config($count_all, $_GET['rp'], $_GET['page']);
 	      $json_data = $paging_data["json_paging"];
@@ -292,8 +284,6 @@ class DID extends MX_Controller {
 	      //"<pre>";print_r($query);
 	      
 	      $query=$this->db_model->getJionQuery("dids", 'reseller_pricing.setup,reseller_pricing.cost,reseller_pricing.connectcost,dids.inc,reseller_pricing.includedseconds,reseller_pricing.monthlycost,dids.number,dids.id,dids.accountid,dids.extensions,dids.status,dids.provider_id,dids.allocation_bill_status,reseller_pricing.disconnectionfee,dids.dial_as,dids.call_type,dids.country_id', $where, "reseller_pricing", $jionCondition, 'inner',$paging_data["paging"]["page_no"], $paging_data["paging"]["start"],"dids.id", "ASC",  '');
-	      
-// 	      echo "<pre>";echo $this->db->last_query();print_r($query->result());exit;
 // 	      exit;
 	}else{
 	      $json_data = array();

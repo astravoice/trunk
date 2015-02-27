@@ -178,7 +178,9 @@ class common {
             {
 		$flag_status="Yes(C)";
             }else{
-		$where = array("note" => $number);
+            $accountinfo=$this->CI->session->userdata('accountinfo');
+	    $reseller_id= $accountinfo['type'] != 1 ? 0 : $accountinfo['id'];
+		$where = array("note" => $number,'parent_id'=>$reseller_id);
 		$field_name_re = $this->CI->db_model->getSelect("reseller_id", 'reseller_pricing', $where);
 		$field_name_re = $field_name_re->result();
 		

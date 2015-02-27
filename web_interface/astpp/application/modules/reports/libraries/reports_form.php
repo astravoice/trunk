@@ -51,7 +51,7 @@ class Reports_form {
             array('Caller ID', 'INPUT', array('name' => 'callerid[callerid]', '', 'id' => 'first_name', 'size' => '15', 'class' => "text field "), '', 'tOOL TIP', '1', 'callerid[callerid-string]', '', '', '', 'search_string_type', ''),
             array('Called Number', 'INPUT', array('name' => 'callednum[callednum]', 'value' => '', 'size' => '20', 'class' => "text field "), '', 'Tool tips info', '1', 'callednum[callednum-string]', '', '', '', 'search_string_type', ''),
           //   array('Code ', 'INPUT', array('name' => 'pattern[pattern]', 'value' => '', 'size' => '20', 'class' => "text field "), '', 'Tool tips info', '1', 'pattern[pattern-integer]', '', '', '', 'search_int_type', ''),
-            array('Bill Sec ', 'INPUT', array('name' => 'billseconds[billseconds]', 'value' => '', 'size' => '20', 'class' => "text field "), '', 'Tool tips info', '1', 'billseconds[billseconds-integer]', '', '', '', 'search_int_type', ''),
+            array('Duration', 'INPUT', array('name' => 'billseconds[billseconds]', 'value' => '', 'size' => '20', 'class' => "text field "), '', 'Tool tips info', '1', 'billseconds[billseconds-integer]', '', '', '', 'search_int_type', ''),
 	    array('Disposition', 'disposition', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', '', '', '', 'set_despostion'),
             array('Debit ', 'INPUT', array('name' => 'debit[debit]', 'value' => '', 'size' => '20', 'class' => "text field "), '', 'Tool tips info', '1', 'debit[debit-integer]', '', '', '', 'search_int_type', ''),
             array('Destination ', 'INPUT', array('name' => 'notes[notes]', 'value' => '', 'size' => '20', 'class' => "text field "), '', 'Tool tips info', '1', 'notes[notes-integer]', '', '', '', 'search_int_type', ''),
