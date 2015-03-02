@@ -503,12 +503,13 @@ function reseller_export_cdr_xls() {
             $data['accountid'] = $id;
             $data['callerid_name'] = '';
             $data['callerid_number'] = '';
-            $data['status'] = '';
+            $data['status'] = '0';
             $data['flag'] = '0';
         }
         $data['accountid'] = $account_num['number'];
         $data['form'] = $this->form->build_form($this->accounts_form->get_customer_callerid_fields(), $data);
         $post_array = $this->input->post();
+        
         if (!empty($post_array)) {
             if ($this->form_validation->run() == FALSE) {
                 $data['validation_errors'] = validation_errors();
@@ -516,11 +517,11 @@ function reseller_export_cdr_xls() {
                 exit;
             } else {
                 if ($post_array['flag'] == '1') {
-                    $this->accounts_model->edit_callerid($this->input->post());
+                    $this->accounts_model->edit_callerid($post_array);
                      echo json_encode(array("SUCCESS"=> "Account callerID updated successfully!"));
                       exit;
                 } else {
-                    $this->accounts_model->add_callerid($this->input->post());
+                    $this->accounts_model->add_callerid($post_array);
                     echo json_encode(array("SUCCESS"=> "Account callerID added successfully!"));
                     exit;
                 }
@@ -1440,7 +1441,7 @@ function reseller_export_cdr_xls() {
 
     function reseller_delete($id) {
         $reseller_ids=$this->common->subreseller_list($id);
-        $where= "reseller_id IN ($reseller_ids)";
+        $where= "reseller_id IN ($reseller_ids) OR id = $id";
         $data=array('deleted'=>1);
         $this->db->where($where);
         $this->db->update('accounts',$data);
@@ -1911,30 +1912,25 @@ function reseller_export_cdr_xls() {
 	    }
         }
         if ($action == "delete") {
-            $reseller_session_id=$this->session->userdata['accountinfo']['id'];
-// echo "<pre>";            
-//          print_r($this->session->userdata['accountinfo']);
-         
-	    $did_query = $this->db_model->getSelect("*", "reseller_pricing", array("id" => $did_id));
-	    $did_arr = $did_query->result_array();
-
-	    
-            $delete_array=array('reseller_id'=>$accountid,'id'=>$did_id);
-//                 print_r($delete_array);
-//                 exit;
-	    $this->db->where($delete_array);
-	    $this->db->delete('reseller_pricing');
-	    
-	    if($this->session->userdata['userlevel_logintype'] == -1)
-	    {
-	      $parent_id=0;
+             $this->db->where('id',$did_id);
+             $this->db->select('note');
+             $pricing_res=$this->db->get('reseller_pricing');
+             if($pricing_res->num_rows() > 0){
+             $pricing_res=$pricing_res->result_array();
+             $did_number=$pricing_res[0]['note'];
+             $accountinfo=$this->session->userdata('accountinfo');
+             $reseller_ids=$this->common->subreseller_list($accountinfo['id']);
+             $pricing_where= "parent_id IN ($reseller_ids) AND note = $did_number";
+             $this->db->where($pricing_where);
+             $this->db->delete('reseller_pricing');
+             $dids_where="parent_id IN ($reseller_ids) AND number = $did_number";
+             $this->db->where($dids_where);
+             $data= array('accountid'=>0,'parent_id'=>$accountinfo['id']);
+             $this->db->update('dids',$data);
+	     $this->session->set_flashdata('astpp_notification', 'DID removed successfully.');
 	    }else{
-	      $parent_id = $this->session->userdata['accountinfo']['id'];
+	      $this->session->set_flashdata('astpp_notification', 'DID already removed before.');
 	    }
-	    
-	    $this->db_model->update("dids", array("parent_id" => $parent_id), array("number" => $did_arr[0]['note']));
-	    $this->session->set_flashdata('astpp_notification', 'DID removed successfully.');
-// 	    echo $this->db->last_query();exit;
             redirect(base_url() . "accounts/" . $accounttype . "_edit/$accountid#did");
         }
     }

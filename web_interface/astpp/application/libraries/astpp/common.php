@@ -196,6 +196,39 @@ class common {
 //         echo $flag_status;exit;
         return $flag_status;
     }
+    
+    function check_did_avl_reseller($select, $table, $where)
+    {
+	$number=$where;
+	$where = array("number" => $where);
+	$field_name = $this->CI->db_model->getSelect("accountid,parent_id", 'dids', $where);
+        $field_name = $field_name->result();
+
+        if (isset($field_name) && !empty($field_name)) {
+            if($field_name[0]->accountid != 0)
+            {
+		$flag_status="Yes(C)";
+            }else{
+		if($field_name[0]->parent_id != 0){
+		$parent_id =$field_name[0]->parent_id;
+		$where = array("note" => $number,'parent_id'=>$parent_id);
+		$field_name_re = $this->CI->db_model->getSelect("reseller_id", 'reseller_pricing', $where);
+		$field_name_re = $field_name_re->result();
+		if (isset($field_name_re) && !empty($field_name_re)) {
+		      $flag_status="Yes(R)";
+		}else{
+		  $flag_status="No";
+		}
+	    }else{
+		$flag_status="No";
+	    }
+	    }
+        } else {
+            $flag_status="No";
+        }
+//         echo $flag_status;exit;
+        return $flag_status;
+    }
 //    get data for Comma seprated
     function get_field_name_coma($select, $table, $where) {
         $value = '';

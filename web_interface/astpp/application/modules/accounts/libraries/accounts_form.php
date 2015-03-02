@@ -160,7 +160,7 @@ class Accounts_form {
         $form['callerid'] = array(
             array('', 'HIDDEN', array('name' => 'flag'), '', '', '', ''),
             array('Account Number', 'INPUT', array('name' => 'accountid', 'size' => '20', 'readonly' => true, 'maxlength' => '15', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter account number'),
-            array('Status', 'status', 'CHECKBOX', array('name' => 'status', 'value' => 'on', 'checked' => false), '', 'tOOL TIP', ''),
+            array('Status', 'status', 'CHECKBOX', array('name' => 'status'), '', 'tOOL TIP', ''),
             array('Caller Id Name', 'INPUT', array('name' => 'callerid_name', 'size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|required', 'tOOL TIP', ''),
             array('Caller Id Number', 'INPUT', array('name' => 'callerid_number', 'size' => '20', 'maxlength' => '15', 'class' => "text field medium"), 'trim|numeric', 'tOOL TIP', '')
         );
@@ -301,9 +301,10 @@ class Accounts_form {
             array('', 'HIDDEN', array('name' => 'id'), '', '', '', ''),
             array('', 'HIDDEN', array('name' => 'type', 'value' => '0'), '', '', ''),
             array('Account Number', 'INPUT', array('name' => 'number', 'value' => $uname, 'size' => '20', 'readonly' => true, 'maxlength' => '15', 'class' => "text field medium"), '', 'tOOL TIP', 'Please Enter account number'),
-            array('Password', 'PASSWORD', array('name' => 'password', 'size' => '20', 'maxlength' => '20', 'class' => "text field medium"), 'trim|required|min_length[5]|max_length[20]|xss_clean', 'tOOL TIP', 'Please Enter Password'),
-         //   array('Language', 'language_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'languagename', 'language', 'build_dropdown', '', ''),
+            array('Password', 'PASSWORD', array('name' => 'password', 'size' => '20', 'maxlength' => '20', 'class' => "text field medium"), 'trim|required
+            |min_length[5]|max_length[20]|xss_clean', 'tOOL TIP', 'Please Enter Password'),
             array('Pin', 'INPUT', array('name' => 'pin', 'size' => '20', 'maxlength' => '20', 'class' => "text field medium"), 'max_length[20]', 'tOOL TIP', ''),
+         //   array('Language', 'language_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter account number', 'id', 'languagename', 'language', 'build_dropdown', '', ''),
             array('Company', 'INPUT', array('name' => 'company_name', 'maxlength' => '150', 'size' => '15', 'class' => 'text field medium'), 'trim|alpha_numeric_space|xss_clean', 'tOOL TIP', ''),
             array('First Name', 'INPUT', array('name' => 'first_name', 'id' => 'first_name', 'size' => '15', 'maxlength' => '50', 'class' => "text field medium"), 'trim|required|max_length[20]|xss_clean', 'tOOL TIP', 'Please Enter account number'),
             array('Last Name', 'INPUT', array('name' => 'last_name', 'size' => '15', 'maxlength' => '50', 'class' => "text field medium"), 'trim|alpha_dash|xss_clean', 'tOOL TIP', 'Please Enter Password'),

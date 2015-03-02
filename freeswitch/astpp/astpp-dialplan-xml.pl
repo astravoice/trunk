@@ -194,6 +194,7 @@ sub xml_process()
 		    origination_rates_info=>$origination_rates_info
 	    );
 	    
+	    my $outboundcallerid;
 		if(@termination_rates_info)
 		{
 		      my $count = 0;
@@ -223,7 +224,7 @@ sub xml_process()
 		      &error_xml_without_cdr($arg{destination_number},"TERMINATION_RATES_NOT_FOUND") if($count == 0);
 		      
 		      #Fetch outbound callerid for accounts & If exist and active then override it
-		      my $outboundcallerid = &get_outbound_callerid(
+		      $outboundcallerid = &get_outbound_callerid(
 		            accountid=>$cust_accountid,
 		            table=>'accounts_callerid',
 		            field=>'accountid'

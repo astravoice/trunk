@@ -208,6 +208,7 @@ sub fs_dialplan_xml_standard() {
         account_type => $arg{account_type},
         destination_number => $arg{destination_number},
         max_length => $arg{max_length},
+        outbound_callerid=>$arg{outbound_callerid},
         calltype=>'STANDARD',
         call_direction=>'outbound',
         xml => $xml

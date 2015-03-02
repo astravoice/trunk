@@ -122,7 +122,8 @@ class DID extends MX_Controller {
         $data['search_flag'] = true;
         $data['cur_menu_no'] = 4;
         $this->session->set_userdata('did_search', 0);
-        $data['grid_fields'] = $this->did_form->build_did_list_for_admin();
+        
+
         if ($this->session->userdata('logintype') == 2) {
             $data["grid_buttons"] = $this->did_form->build_grid_buttons();
         } else {
@@ -148,8 +149,10 @@ class DID extends MX_Controller {
         
         if($this->session->userdata['userlevel_logintype'] == '1')
  	{
+	  $data['grid_fields'] = $this->did_form->build_did_list_for_reseller_login();
 	  $data['form_search'] = $this->form->build_serach_form($this->did_form->get_search_did_form_for_reseller());
 	}else{
+	  $data['grid_fields'] = $this->did_form->build_did_list_for_admin();
 	  $data['form_search'] = $this->form->build_serach_form($this->did_form->get_search_did_form());
 	}
         $this->load->view('view_did_list', $data);
@@ -165,9 +168,9 @@ class DID extends MX_Controller {
         $count_all = $this->did_model->getdid_list(false);
         $paging_data = $this->form->load_grid_config($count_all, $_GET['rp'], $_GET['page']);
         $json_data = $paging_data["json_paging"];
-
+	$list = $this->session->userdata['userlevel_logintype'] == 1 ? $this->did_form->build_did_list_for_reseller_login() :$this->did_form->build_did_list_for_admin();
         $query = $this->did_model->getdid_list(true, $paging_data["paging"]["start"], $paging_data["paging"]["page_no"]);
-        $grid_fields = json_decode($this->did_form->build_did_list_for_admin());
+        $grid_fields = json_decode($list);
         $json_data['rows'] = $this->form->build_grid($query, $grid_fields);
 
         echo json_encode($json_data);

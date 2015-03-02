@@ -92,15 +92,6 @@ array('Provider', 'provider_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter acc
 
     function build_did_list_for_admin() {
        // array(display name, width, db_field_parent_table,feidname, db_field_child_table,function name);
-        if ($this->CI->session->userdata('logintype') == '1') {
-            $action = 'did/did_reseller_edit/edit/';
-            $action_remove = 'did/did_reseller_edit/delete/';
-            $mode="popup";
-        } else {
-            $action = 'did/did_edit/';
-            $action_remove = 'did/did_remove/';
-            $mode="popup";
-        }
         $grid_field_arr = json_encode(array(array("<input type='checkbox' name='chkAll' class='ace checkall'/><label class='lbl'></label>", "30", "", "", "", ""),
             array("DID", "120", "number", "", "", ""),
 //             array("Account Number", "100", "accountid", "number", "accounts", "get_field_name"),
@@ -115,8 +106,28 @@ array('Provider', 'provider_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter acc
             array("Setup <br> Fee", "100", "setup", "setup", "setup", "convert_to_currency"),
             array("Monthly<br> fee", "100", "monthlycost", "monthlycost", "monthlycost", "convert_to_currency"),
             array("Status", "90", "status", "status", "status", "get_status"),
-	    array("Action", "90", "", "", "", array("EDIT" => array("url" => "$action", "mode" => "$mode"),
-                    "DELETE" => array("url" => "$action_remove", "mode" => "single")))
+	    array("Action", "90", "", "", "", array("EDIT" => array("url" => "did/did_edit/", "mode" => "popup"),
+                    "DELETE" => array("url" => "did/did_remove/", "mode" => "single")))
+                ));
+        return $grid_field_arr;
+    }
+        function build_did_list_for_reseller_login() {
+        // array(display name, width, db_field_parent_table,feidname, db_field_child_table,function name);
+        $grid_field_arr = json_encode(array(
+            array("DID", "120", "number", "", "", ""),
+            array("Account", "140", "accountid", "first_name,last_name,number", "accounts", "get_field_name_coma_new"),
+            array("Is purchased?", "120", "number", "number", "number", "check_did_avl"),
+            array("Call Type", "90", "call_type", "call_type", "call_type", "get_call_type"),
+            array("Destination", "115", "extensions", "", "", ""),
+//             array("Country", "105", "country_id", "country", "countrycode", "get_field_name"),
+            array("Increments", "120", "inc", "", "", ""),
+            array("Cost", "100", "cost", "cost", "cost", "convert_to_currency"),
+       //     array("Included <br>Seconds", "65", "includedseconds", "", "", ""),
+            array("Setup <br> Fee", "100", "setup", "setup", "setup", "convert_to_currency"),
+            array("Monthly<br> fee", "100", "monthlycost", "monthlycost", "monthlycost", "convert_to_currency"),
+            array("Status", "90", "status", "status", "status", "get_status"),
+	    array("Action", "90", "", "", "", array("EDIT" => array("url" => "did/did_reseller_edit/edit/", "mode" => "popup"),
+                    "DELETE" => array("url" => "did/did_reseller_edit/delete/", "mode" => "single")))
                 ));
         return $grid_field_arr;
     }
@@ -151,7 +162,7 @@ array('Provider', 'provider_id', 'SELECT', '', '', 'tOOL TIP', 'Please Enter acc
         // array(display name, width, db_field_parent_table,feidname, db_field_child_table,function name);
         $grid_field_arr = json_encode(array(array("DID Number", "120", "number", "", "", ""),
             array("Increments", "120", "inc", "", "", ""),
-            array("Is purchased?", "120", "number", "number", "number", "check_did_avl"),
+            array("Is purchased?", "120", "number", "number", "number", "check_did_avl_reseller"),
             array("Cost", "120", "cost", "cost", "cost", "convert_to_currency"),
             array("Included<br> Seconds", "100", "includedseconds", "", "", ""),
             array("Setup <br> Fee", "109", "setup", "setup", "setup", "convert_to_currency"),

@@ -252,11 +252,13 @@ class Form {
                     $form_contents.= '<div class="col-md-12 no-padding error_div"><div class="col-md-3">&nbsp;</div>';
                     $form_contents.= '<span class="popup_error col-md-8 no-padding" id="' . $fieldvalue[2]['name'] . '_error">&nbsp;</span></div>';
                 } else if ($fieldvalue[2] == 'CHECKBOX') {
-                    if (isset($this->CI->input->post))
+                    if (isset($this->CI->input->post)){
                         $fieldvalue[3]['value'] = (!$this->CI->input->post($fieldvalue[1])) ? @$fieldvalue[3]['value'] : $this->CI->input->post($fieldvalue[1]);
+                    }    
                     else
-                        $fieldvalue[3]['value'] = ($values) ? (isset($values[$fieldvalue[1]]) ? 1: 0) : @$fieldvalue[3]['value'];
-
+                    {
+                        $fieldvalue[3]['value'] = ($values) ? (isset($values[$fieldvalue[1]]) && $values[$fieldvalue[1]] ? 1: 0) : @$fieldvalue[3]['value'];
+		    }
                     if ($fieldvalue[3]['value'] == "1") {
                         $checked = true;
                     } else {
