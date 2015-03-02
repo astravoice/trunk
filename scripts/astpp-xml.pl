@@ -171,7 +171,8 @@ sub fs_dialplan_xml_bridge() {
         $arg{destination_number}= $arg{termination_rate}->{prepend} . $arg{destination_number};
 	}
 	
-	$xml .= "<action application=\"set\" data=\"effective_destination_number=$arg{destination_number}\"/>\n";	
+	#$xml .= "<action application=\"set\" data=\"effective_destination_number=$arg{destination_number}\"/>\n";
+	$xml .= "<action application=\"set\" data=\"effective_destination_number=$params->{'Caller-Destination-Number'}\"/>\n";	
     $xml .= "<action application=\"set\" data=\"termination_rates=".$arg{termination_dp_string}."\"/>\n";
     
 	if($arg{termination_rate}->{maxchannels} > 0)
