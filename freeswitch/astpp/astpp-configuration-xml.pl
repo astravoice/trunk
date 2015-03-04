@@ -38,7 +38,11 @@ sub xml_process()
         $sql = $gbl_astpp_db->prepare($tmp);
         $sql->execute;
         while ( $row = $sql->fetchrow_hashref ) {
-    	     $xml .= "<node type=\"allow\" cidr=\"".$row->{ip}."/32\"/>\n";
+	     chomp($row->{ip});
+	     if( $row->{ip} =~ m/^(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)$/ )
+	     {			             
+	    	     $xml .= "<node type=\"allow\" cidr=\"".$row->{ip}."/32\"/>\n";
+	     }
         }
         
         #Add gateway ip address
@@ -47,13 +51,17 @@ sub xml_process()
         $sql_gw->execute;
         while ( $row_gw = $sql_gw->fetchrow_hashref ) {	
 	        my %data_gw =  %{ decode_json($row_gw->{gateway_data}) };
-    	    while (my ($key_gw, $value_gw) = each %data_gw) {	     	    
+	        while (my ($key_gw, $value_gw) = each %data_gw) {	     	    
                 if($key_gw eq 'proxy')
                 {
-	                $xml .= "<node type=\"allow\" cidr=\"".$data_gw{$key_gw}."/32\"/>\n";
-                }
-            }	
-        }
+			        chomp($data_gw{$key_gw});
+	                if( $data_gw{$key_gw} =~ m/^(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)$/ )
+          		    {
+	         	       $xml .= "<node type=\"allow\" cidr=\"".$data_gw{$key_gw}."/32\"/>\n";
+                	}
+                 }	
+             }
+	    }
         
         #Add opensips ip address if opensips is enable
         if($gbl_config->{opensips} eq '1')
