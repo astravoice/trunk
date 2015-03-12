@@ -172,16 +172,16 @@ sub max_length() {
 	
 	#for calling card only 
 	return 1 if(!defined($origination_rates->{id}));
+	
+	if ($rategroup->{markup} > 0) {
+		$origination_rates->{cost} = $origination_rates->{cost} + ( ($rategroup->{markup} * $origination_rates->{cost}) / 100 )
+	}
 	      
     #Generate string to pass into dialplan
     my $origination_dp_string = "ID:$origination_rates->{id}|CODE:$origination_rates->{pattern}|DESTINATION:$origination_rates->{comment}|CONNECTIONCOST:$origination_rates->{connectcost}|INCLUDEDSECONDS:$origination_rates->{includedseconds}|COST:$origination_rates->{cost}|INC:$origination_rates->{inc}|RATEGROUP:$rategroup->{id}|MARKUP:$rategroup->{markup}|ACCID:$arg{carddata}->{id}";
     		
     &error_xml_without_cdr($arg{destination_number},"NO_SUFFICIENT_FUND") if(&get_balance($arg{carddata}) < $origination_rates->{connectcost});			
-    
-	if ($rategroup->{markup} > 0) {
-		$origination_rates->{cost} = $origination_rates->{cost} + ( ($rategroup->{markup} * $origination_rates->{cost}) / 100 )
-	}
-	
+    		
 	my $maxlength = 0;
 		
 	if ( $origination_rates->{cost} > 0 ) {
