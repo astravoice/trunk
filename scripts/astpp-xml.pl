@@ -142,7 +142,8 @@ sub fs_dialplan_xml_did() {
 	#Local call
 	elsif($arg{call_type} == '1')
 	{ 			
-		$xml .= "<action application=\"bridge\" data=\"user/$arg{extensions}\@\${domain_name}\"/>\n";
+		#$xml .= "<action application=\"bridge\" data=\"user/$arg{extensions}\@\${domain_name}\"/>\n";
+		$xml .= "<action application=\"bridge\" data=\"\{sip_invite_to_uri=<sip:$arg{destination_number}\@\$\${domain_name}>\}user/$arg{extensions}\@\$\${domain_name}\"/>\n";
 	}
 	#Any other option
 	else{		
