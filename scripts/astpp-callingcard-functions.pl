@@ -90,6 +90,8 @@ sub auth_callingcard()
                 $authenticated = 1;
                 $pin=$cardinfo->{pin};
             }
+            # Flush dtmf digit on queue
+            $session->flushDigits();
             $retries++;
          }
          
