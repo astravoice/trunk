@@ -89,7 +89,8 @@ sub validate_card_usage() {
         if ( $arg{carddata}->{validfordays} > 0 )
         {
             #Check if the card is set to expire and deal with that as appropriate.            
-            &insert_update_query("Update expiry","UPDATE accounts SET expiry = DATE_ADD($now, INTERVAL " . " $arg{carddata}->{validfordays} day) WHERE id = ".$arg{carddata}->{id});
+            &insert_update_query("Update expiry","UPDATE accounts SET expiry = DATE_ADD('$now', INTERVAL " . " $arg{carddata}->{validfordays} day) WHERE id = ".$arg{carddata}->{id});
+            return 0;
         }
     }
     elsif ($arg{carddata}->{validfordays} > 0 ){
