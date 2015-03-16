@@ -878,7 +878,7 @@ class Rates extends MX_Controller {
     function resellersrates_list_json() {
         $json_data = array();
         $count_all = $this->rates_model->getreseller_rates_list(false);
-        $paging_data = $this->form->load_grid_config($count_all, $_GET['rp']=10, $_GET['page']=1);
+        $paging_data = $this->form->load_grid_config($count_all, $_GET['rp'], $_GET['page']);
         $json_data = $paging_data["json_paging"];
         $query = $this->rates_model->getreseller_rates_list(true, $paging_data["paging"]["start"], $paging_data["paging"]["page_no"]);
         $grid_fields = json_decode($this->rates_form->build_rates_list_for_reseller());

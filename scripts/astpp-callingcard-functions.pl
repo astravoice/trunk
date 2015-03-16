@@ -90,6 +90,8 @@ sub auth_callingcard()
                 $authenticated = 1;
                 $pin=$cardinfo->{pin};
             }
+            # Flush dtmf digit on queue
+            $session->flushDigits();
             $retries++;
          }
          
@@ -222,6 +224,8 @@ sub process_destination()
     my $destination = $session->playAndGetDigits( 4, 35, 3,$gbl_config->{calling_cards_dial_input_timeout},"#", "$sound->{destination}", "$sound->{destination_incorrect}", '^[0-9]+$' ) ;  
     &print_console("Dialed destination number : ".$destination);
     
+    my $original_destination_number = $destination;
+    
     #Check if destination blocked
     my $block_prefix = &validate_block_prefixes("destination_number"=>$destination,"accountid"=>$carddata->{id});
     if($block_prefix->{id})
@@ -298,7 +302,7 @@ sub process_destination()
     &say_cost( $customer_origination_rates_info );
     &say_timelimit($maxlength);
     
-    &dialout($destination,$maxlength,$customer_carddata,$origination_rates_info,$origination_dp_string);
+    &dialout($original_destination_number,$destination,$maxlength,$customer_carddata,$origination_rates_info,$origination_dp_string);
 
 }
 
@@ -390,7 +394,7 @@ sub dialout() {
     # If a call does not go through we give the user the option
     # of trying again.
             
-    my($destination_number,$maxlength,$carddata,$origination_rates_info,$origination_dp_string) = @_;
+    my($original_destination_number,$destination_number,$maxlength,$carddata,$origination_rates_info,$origination_dp_string) = @_;
 		
     # Get the list of routes for the phone number.
     my @termination_rates_info = &get_termination_rates(
@@ -407,6 +411,7 @@ sub dialout() {
           $session->execute("export","call_processed=internal");
           $session->execute("export","callstart=$now");
           $session->execute("export","originated_destination_number=$destination_number");
+          $session->execute("export","effective_destination_number=$original_destination_number");
           $session->setVariable("continue_on_fail","true");
           $session->setVariable("hangup_after_bridge","true");
           $session->execute("export","accountid=$carddata->{id}");
@@ -446,7 +451,7 @@ sub dialout() {
 	              }
 	
 		          $session->execute("export","termination_rates=$termination_dp_string");
-		          $session->execute("export","effective_destination_number=$destination_number");
+		          #$session->execute("export","effective_destination_number=$destination_number");
 		          $session->execute("limit","db ".$termination_rate->{path}." gw_".$termination_rate->{path}." ".$termination_rate->{maxchannels}) if($termination_rate->{maxchannels} > 0);
 	              
 	              $session->execute("set","absolute_codec_string=$termination_rate->{codec}") if($termination_rate->{codec} ne '');

@@ -223,12 +223,16 @@ sub xml_process()
 		      }		      
 		      &error_xml_without_cdr($arg{destination_number},"TERMINATION_RATES_NOT_FOUND") if($count == 0);
 		      
-		      #Fetch outbound callerid for accounts & If exist and active then override it
-		      $outboundcallerid = &get_outbound_callerid(
-		            accountid=>$cust_accountid,
-		            table=>'accounts_callerid',
-		            field=>'accountid'
-	           );		
+		      #Issues : 37
+		      if(!defined $params->{'variable_calltype'})
+		      {
+    		      #Fetch outbound callerid for accounts & If exist and active then override it
+	    	      $outboundcallerid = &get_outbound_callerid(
+	    	            accountid=>$cust_accountid,
+	    	            table=>'accounts_callerid',
+	    	            field=>'accountid'
+	               );		
+               }
 		}else{
 		    &error_xml_without_cdr($destination_number,"TERMINATION_RATES_NOT_FOUND");
 		}

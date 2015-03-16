@@ -356,13 +356,14 @@ class User extends MX_Controller {
                         $this->add_invoice_data_user($account_data["id"],"did_charge",'DID Purchase',$did_arr[0]["setup"]);
 // ,"call_type"=>$this->input->post("call_type", true)
                     $this->db_model->update("dids", array("accountid" => $account_data["id"]), array("id" => $did_id));
-                    $this->session->set_flashdata('astpp_notification', 'DID purchased Successfully');
+                    $this->session->set_flashdata('astpp_errormsg', 'DID purchased Successfully !');
                     redirect(base_url() . "user/user_didlist/");
                 }else{
                     $this->session->set_flashdata('astpp_notification', 'Insuffiecient fund to purchase this did');
                     redirect(base_url() . "user/user_didlist/");
                 }
             } else {
+		$this->session->set_flashdata('astpp_notification', 'Please select DID');
                 redirect(base_url() . "user/user_didlist/");
             }
         }
@@ -383,6 +384,7 @@ class User extends MX_Controller {
 		}
 
             $this->db_model->update("dids", array("accountid" => $accountid_did), array("id" => $did_id));
+             $this->session->set_flashdata('astpp_notification', 'DID removed successfully !');
             redirect(base_url() . "user/user_didlist/");
         }
     }
