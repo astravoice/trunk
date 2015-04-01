@@ -537,6 +537,7 @@ echo "# Generate Invoice
 " > $CRONPATH
 
    chmod 600 $CRONPATH
+   crontab $CRONPATH
 }
 
 install_perl_packages(){
