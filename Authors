@@ -15,12 +15,12 @@ The makefile is the only file which has not been replaced.
 Name: Prinasen Chetty
 Company: ASTPP VoIP Billing
 Email: prinasen@astpp.org
-Current lead developer and maintainer of ASTPP.
 Prinasen has taken over the development from Darren Wiebe and since then and has released V1.6 and V1.7, where we have rewritten the entire 
-GUI from scratch in PHP using Codeigniter MVC framework. Prinasen will be leading the way forward of ASTPP and further developing the project.
+GUI from scratch in PHP using Codeigniter MVC framework.
 
 Name: Samir Doshi
 Company: iNextrix Technologies Pvt. Ltd.
 Email: samir.doshi@inextrix.com
-Major contributor towards ASTPP. Samir has been actively involved in ASTPP since Version 1.6 and has brought upon many patch's and introduced
-new functionalities. Samir is now part of ASTPP's core team.
+Current lead developer and maintainer of ASTPP.
+Samir is core team member of ASTPP and has been actively involved in ASTPP since Version 1.6 and has brought upon many patch's and introduced
+new functionalities. 
