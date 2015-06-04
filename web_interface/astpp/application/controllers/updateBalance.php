@@ -129,8 +129,11 @@ class UpdateBalance extends MX_Controller {
 
 	        if($user_account["posttoexternal"] == 0){
                     $invoiceid = $this->common_model->generate_receipt($user_account["id"],$charges_amt["charges"]);
-                    $this->db->update("accounts",array("balance"=> "balance - ".$charges_amt["charges"]), array("id"=>$user_account["id"]));
-                    if($user_account["balance"] <= 0){
+                    $this->db->set('balance', 'balance-'.$charges_amt["charges"], FALSE);
+                    $this->db->where('id', $user_account["id"]);
+                    $this->db->update("accounts");
+
+		    if($user_account["balance"] <= 0){
                         $this->db->update("dids",array("accountid"=> "0"), array("id"=>$did_data["id"]));
                     }
 	        }    
@@ -163,8 +166,10 @@ class UpdateBalance extends MX_Controller {
 
 	        if($user_account["posttoexternal"] == 0){
                     $invoiceid = $this->common_model->generate_receipt($user_account["id"],$charges_amt["charges"]);
-                    $this->db->update("accounts",array("balance"=> "balance - ".$charges_amt["charges"]), array("accountid"=>$user_account["id"]));
-	        }                        
+	            $this->db->set('balance', 'balance-'.$charges_amt["charges"], FALSE);
+                    $this->db->where('id', $user_account["id"]);
+                    $this->db->update("accounts");
+		}                        
                 $this->db->update("reseller_pricing",array("charge_upto"=>$charges_amt["upto_date"]), array("id"=>$did_data["id"]));
                 $invoice_item_arr = array("accountid"=>$user_account["id"],
                                           "description"=>$did_data['number']."-".$fromdate." to ".$todate,
