@@ -44,15 +44,15 @@
 | The $active_record variables lets you determine whether or not to load
 | the active record class
 */
-//$astpp_config = parse_ini_file("/var/lib/astpp/astpp-config.conf");
+$astpp_config = parse_ini_file("/var/lib/astpp/astpp-config.conf");
 
 $active_group = 'default';
 $active_record = TRUE;
 $astpp_config['astpp_dbengine'] = "MySql";
-$db['default']['hostname'] = "localhost";//$astpp_config['dbhost'];
-$db['default']['username'] = "root";//$astpp_config['dbuser'];
-$db['default']['password'] = "cDC6ro4VRaJiYL3Y";//$astpp_config['dbpass'];
-$db['default']['database'] = "astpp21";//$astpp_config['dbname'];
+$db['default']['hostname'] = $astpp_config['dbhost'];
+$db['default']['username'] = $astpp_config['dbuser'];
+$db['default']['password'] = $astpp_config['dbpass'];
+$db['default']['database'] = $astpp_config['dbname'];
 $db['default']['dbdriver'] = "mysql";//strtolower($astpp_config['astpp_dbengine']);
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = FALSE;
