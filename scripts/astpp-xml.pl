@@ -134,6 +134,9 @@ sub fs_dialplan_xml_did() {
         $xml .= $arg{gbl_xml_channels};
     }
     $xml .= "<action application=\"set\" data=\"origination_rates=".$arg{origination_dp_string}."\"/>\n";
+    $xml .= "<action application=\"set\" data=\"caller_id_name=\$\{cidlookup(\$\{caller_id_number\})\}\"/>";
+    $xml .= "<action application=\"set\" data=\"effective_caller_id_name=\$\{caller_id_name\}\"/>";
+
 	#PSTN Call
 	if($arg{call_type} == '0')
 	{
